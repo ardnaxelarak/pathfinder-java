@@ -1,0 +1,74 @@
+<project name="pathfinder-java" default="jar" basedir=".">
+	<property name="srcPath" value="src"/>
+	<property name="buildPath" value="build"/>
+	<property name="buildPath.classes" value="${buildPath}/classes"/>
+	<property name="libPath" value="lib"/>
+	<property name="imgPath" value="images"/>
+	<property name="version" value="0.0.0"/>
+	<property name="jarname" value="pathfinder-java-${version}.jar"/>
+
+	<property name="one-jar.dist.dir" value="/usr/local/lib/one-jar-ant"/>
+	<import file="${one-jar.dist.dir}/one-jar-ant-task.xml" optional="true"/>
+
+	<path id="project.classpath">
+		<pathelement location="${srcPath}"/>
+		<fileset dir="${libPath}" includes="*.jar"/>
+	</path>
+
+	<pathconvert property="manifest.classpath" pathsep=" ">
+		<path refid="project.classpath"/>
+		<mapper>
+			<chainedmapper>
+				<flattenmapper/>
+				<globmapper from="*.jar" to="${libPath}/*.jar"/>
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${buildPath}"/>
+		<mkdir dir="${buildPath.classes}"/>
+	</target>
+
+	<target name="compile" depends="init">
+		<javac includeantruntime="false" debug="true" srcdir="${srcPath}" destdir="${buildPath.classes}">
+			<classpath refid="project.classpath"/>
+		</javac>
+	</target>
+
+	<target name="clean">
+		<delete dir="${buildPath}"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar basedir="${buildPath.classes}" destfile="${jarname}">
+			<manifest>
+				<attribute name="Built-By" value="${builder}" />
+				<attribute name="Built-On" value="${build-info.current-date}" />
+				<attribute name="Built-At" value="${build-info.current-time}" />
+				<attribute name="Main-Class" value="pathfinder.Main"/>
+				<attribute name="Class-Path" value="${manifest.classpath}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="one-jar" depends="jar">
+		<one-jar destfile="${buildPath}/artnav-onejar.jar">
+			<manifest>
+				<attribute name="Built-By" value="${builder}" />
+				<attribute name="Built-On" value="${build-info.current-date}" />
+				<attribute name="Built-At" value="${build-info.current-time}" />
+				<attribute name="Main-Class" value="pathfinder.Main"/>
+			</manifest>
+			<main jar="${jarname}"/>
+			<lib>
+				<fileset dir="${libPath}" includes="*.jar"/>
+			</lib>
+			<binlib>
+				<fileset dir="${libPath}" includes="*.so"/>
+			</binlib>
+			<fileset dir="${imgPath}" includes="*.png"/>
+		</one-jar>
+	</target>
+</project>
