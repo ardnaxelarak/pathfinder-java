@@ -175,6 +175,11 @@ public class CharacterTemplate
 		return ferocity;
 	}
 
+	public int getFastHealing()
+	{
+		return fast_healing;
+	}
+
 	public int getRegeneration()
 	{
 		return regeneration;

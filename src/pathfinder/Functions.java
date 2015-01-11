@@ -19,4 +19,13 @@ public class Functions
 	{
 		return drp.parse(roll);
 	}
+
+	public static int roll()
+	{
+		return rand.nextInt(20) + 1;
+	}
+
+	public static void log(String message, Object... args)
+	{
+	}
 }

@@ -1,5 +1,6 @@
 package pathfinder;
 
+import pathfinder.CharacterTemplate;
 import pathfinder.Functions;
 import pathfinder.MySQLConnection;
 import pathfinder.dice.DiceRollParser;
@@ -24,7 +25,7 @@ public class Main
 			{
 				System.out.printf("%3d: %s\n", rs.getInt("id"), rs.getString("name"));
 			}
-			Character c = conn.loadCharacter(8);
+			CharacterTemplate c = conn.loadCharacter(8);
 			System.out.println(c.getURL());
 			DiceRoll d = c.getHP();
 			System.out.println(d);
