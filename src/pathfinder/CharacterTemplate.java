@@ -4,7 +4,7 @@ import pathfinder.dice.DiceRoll;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Character
+public class CharacterTemplate
 {
 	private int id, strength, dexterity, constitution, intelligence, wisdom,
 				charisma, initiative_modifier, speed, fly_speed, swim_speed,
@@ -16,7 +16,7 @@ public class Character
 	private DiceRoll hp;
 	private boolean ferocity;
 	private double cr;
-	public Character(ResultSet set) throws SQLException
+	public CharacterTemplate(ResultSet set) throws SQLException
 	{
 		set.next();
 		id = set.getInt("id");
@@ -55,13 +55,168 @@ public class Character
 		url = set.getString("url");
 	}
 
-	public String getURL()
+	public int getID()
 	{
-		return url;
+		return id;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public double getCR()
+	{
+		return cr;
+	}
+
+	public int getSTR()
+	{
+		return strength;
+	}
+
+	public int getDEX()
+	{
+		return dexterity;
+	}
+
+	public int getCON()
+	{
+		return constitution;
+	}
+
+	public int getINT()
+	{
+		return intelligence;
+	}
+
+	public int getWIS()
+	{
+		return wisdom;
+	}
+
+	public int getCHA()
+	{
+		return charisma;
+	}
+
+	public String getBAB()
+	{
+		return base_attack_bonus;
+	}
+
+	public int getInitiativeModifier()
+	{
+		return initiative_modifier;
+	}
+
+	public int getLandSpeed()
+	{
+		return speed;
+	}
+
+	public int getFlySpeed()
+	{
+		return fly_speed;
+	}
+
+	public String getFlyManeuverability()
+	{
+		return fly_maneuver;
+	}
+
+	public int getSwimSpeed()
+	{
+		return swim_speed;
+	}
+
+	public int getClimbSpeed()
+	{
+		return climb_speed;
+	}
+
+	public int getBurrowSpeed()
+	{
+		return burrow_speed;
+	}
+
+	public int getSpace()
+	{
+		return space;
+	}
+
+	public int getReach()
+	{
+		return reach;
+	}
+
+	public int getAC()
+	{
+		return ac;
+	}
+
+	public int getTouchAC()
+	{
+		return touch_ac;
+	}
+
+	public int getFlatFootedAC()
+	{
+		return flat_footed_ac;
 	}
 
 	public DiceRoll getHP()
 	{
 		return hp;
+	}
+
+	public boolean hasFerocity()
+	{
+		return ferocity;
+	}
+
+	public int getRegeneration()
+	{
+		return regeneration;
+	}
+
+	public String getRegenerationBypass()
+	{
+		return regeneration_bypass;
+	}
+
+	public int getFortSave()
+	{
+		return fort;
+	}
+
+	public int getRefSave()
+	{
+		return ref;
+	}
+
+	public int getWillSave()
+	{
+		return will;
+	}
+
+	public int getDR()
+	{
+		return dr;
+	}
+
+	public String getDRBypass()
+	{
+		return dr_bypass;
+	}
+
+	public int getSR()
+	{
+		return sr;
+	}
+
+	public String getURL()
+	{
+		return url;
 	}
 }

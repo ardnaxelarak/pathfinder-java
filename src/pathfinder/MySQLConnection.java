@@ -1,6 +1,6 @@
 package pathfinder;
 
-import pathfinder.Character;
+import pathfinder.CharacterTemplate;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -26,14 +26,14 @@ public class MySQLConnection
 		return st.executeQuery(query);
 	}
 
-	public Character loadCharacter(int id) throws SQLException
+	public CharacterTemplate loadCharacter(int id) throws SQLException
 	{
 		ResultSet rs = null;
 		try
 		{
 			charSelect.setInt(1, id);
 			rs = charSelect.executeQuery();
-			Character c = new Character(rs);
+			CharacterTemplate c = new CharacterTemplate(rs);
 			return c;
 		}
 		finally
