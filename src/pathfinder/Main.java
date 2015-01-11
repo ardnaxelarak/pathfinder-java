@@ -1,5 +1,6 @@
 package pathfinder;
 
+import pathfinder.Functions;
 import pathfinder.MySQLConnection;
 import pathfinder.dice.DiceRollParser;
 import pathfinder.dice.DiceRoll;
@@ -23,16 +24,16 @@ public class Main
 			{
 				System.out.printf("%3d: %s\n", rs.getInt("id"), rs.getString("name"));
 			}
+			Character c = conn.loadCharacter(8);
+			System.out.println(c.getURL());
+			DiceRoll d = c.getHP();
+			System.out.println(d);
+			System.out.println(d.doubleAverage());
+			System.out.println(d.roll());
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
-		DiceRollParser drp = new DiceRollParser();
-		DiceRoll d = drp.parse("2d4 - d3 + 2");
-		System.out.println(d);
-		System.out.println(d.doubleAverage());
-		for (int i = 0; i < 20; i++)
-			System.out.println(d.roll());
 	}
 }
