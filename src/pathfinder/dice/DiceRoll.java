@@ -1,22 +1,38 @@
 package pathfinder.dice;
 
-import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.LinkedList;
 import java.util.Random;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import pathfinder.parsing.DiceRollLexer;
+import pathfinder.parsing.DiceRollParser;
+import pathfinder.parsing.DiceRollParser.RollContext;
+import pathfinder.parsing.DiceRollParser.PieceContext;
+import pathfinder.parsing.DiceRollParser.DiceContext;
 
 public class DiceRoll
 {
 	private Piece[] pieces;
 	private int[] signs;
 	private Random rand;
-	public DiceRoll(ParseTree tree)
+	public DiceRoll(String input)
 	{
-		this(tree, new Random());
+		this(input, new Random());
 	}
 
-	public DiceRoll(ParseTree tree, Random rand)
+	public DiceRoll(String input, Random rand)
 	{
 		this.rand = rand;
+
+		DiceRollLexer lexer = new DiceRollLexer(new ANTLRInputStream(input));
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		DiceRollParser parser = new DiceRollParser(tokens);
+		RollContext tree = parser.roll();
+
 		LinkedList<ParseTree> list = getChildren(tree);
 		int len = (list.size() + 1) / 2;
 		pieces = new Piece[len];

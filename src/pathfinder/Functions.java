@@ -2,20 +2,17 @@ package pathfinder;
 
 import pathfinder.MySQLConnection;
 import pathfinder.dice.DiceRoll;
-import pathfinder.dice.DiceRollParser;
 
 import java.sql.SQLException;
 import java.util.Random;
 
 public class Functions
 {
-	private static DiceRollParser drp;
 	private static MySQLConnection conn = null;
 	private static Random rand;
 	public static void init(String url, String user, String password) throws SQLException
 	{
 		rand = new Random();
-		drp = new DiceRollParser(rand);
 		conn = new MySQLConnection(url, user, password);
 	}
 
@@ -45,7 +42,7 @@ public class Functions
 
 	public static DiceRoll parseDiceRoll(String roll)
 	{
-		return drp.parse(roll);
+		return new DiceRoll(roll, rand);
 	}
 
 	public static int roll(String roll)

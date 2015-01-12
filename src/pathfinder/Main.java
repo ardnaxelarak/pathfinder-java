@@ -3,12 +3,10 @@ package pathfinder;
 import pathfinder.CharacterTemplate;
 import pathfinder.Functions;
 import pathfinder.MySQLConnection;
-import pathfinder.dice.DiceRollParser;
 import pathfinder.dice.DiceRoll;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 public class Main
 {
