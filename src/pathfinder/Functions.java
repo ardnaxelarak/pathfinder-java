@@ -1,7 +1,14 @@
 package pathfinder;
 
 import pathfinder.MySQLConnection;
-import pathfinder.dice.DiceRoll;
+import pathfinder.parsing.DiceRollLexer;
+import pathfinder.parsing.DiceRollParser;
+import pathfinder.parsing.DiceRollParser.RollContext;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.sql.SQLException;
 import java.util.Random;
@@ -40,14 +47,12 @@ public class Functions
 		}
 	}
 
-	public static DiceRoll parseDiceRoll(String roll)
-	{
-		return new DiceRoll(roll, rand);
-	}
-
 	public static int roll(String roll)
 	{
-		return parseDiceRoll(roll).roll();
+		DiceRollLexer lexer = new DiceRollLexer(new ANTLRInputStream(roll));
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		DiceRollParser parser = new DiceRollParser(tokens);
+		return parser.roll(rand).rollValue;
 	}
 
 	public static int roll()

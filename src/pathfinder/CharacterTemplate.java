@@ -1,6 +1,5 @@
 package pathfinder;
 
-import pathfinder.dice.DiceRoll;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -12,8 +11,7 @@ public class CharacterTemplate
 				flat_footed_ac, fast_healing, regeneration, fort, ref,
 				will, dr, sr;
 	private String name, base_attack_bonus, fly_maneuver, url,
-				regeneration_bypass, dr_bypass;
-	private DiceRoll hp;
+				regeneration_bypass, dr_bypass, hp;
 	private boolean ferocity;
 	private double cr;
 	public CharacterTemplate(ResultSet set) throws SQLException
@@ -41,7 +39,7 @@ public class CharacterTemplate
 		ac = set.getInt("ac");
 		touch_ac = set.getInt("touch_ac");
 		flat_footed_ac = set.getInt("flat_footed_ac");
-		hp = Functions.parseDiceRoll(set.getString("hp"));
+		hp = set.getString("hp");
 		ferocity = set.getBoolean("ferocity");
 		fast_healing = set.getInt("fast_healing");
 		regeneration = set.getInt("regeneration");
@@ -165,7 +163,7 @@ public class CharacterTemplate
 		return flat_footed_ac;
 	}
 
-	public DiceRoll getHP()
+	public String getHP()
 	{
 		return hp;
 	}

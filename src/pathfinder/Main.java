@@ -3,10 +3,11 @@ package pathfinder;
 import pathfinder.CharacterTemplate;
 import pathfinder.Functions;
 import pathfinder.MySQLConnection;
-import pathfinder.dice.DiceRoll;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.util.Scanner;
 
 public class Main
 {
@@ -23,9 +24,15 @@ public class Main
 		{
 			e.printStackTrace();
 		}
-		Encounter enc = Functions.getEncounter(4);
+		Encounter enc = Functions.getEncounter(3);
 		if (enc != null)
 			enc.printCharacters();
+		Scanner sc = new Scanner(System.in);
+		while (sc.hasNextLine())
+		{
+			String roll = sc.nextLine();
+			System.out.println(Functions.roll(roll));
+		}
 		Functions.close();
 	}
 }

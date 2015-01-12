@@ -3,7 +3,6 @@ package pathfinder;
 import static pathfinder.Functions.log;
 import static pathfinder.Functions.roll;
 import pathfinder.CharacterTemplate;
-import pathfinder.dice.DiceRoll;
 import pathfinder.enums.Status;
 
 import java.util.LinkedList;
@@ -26,7 +25,7 @@ public class Character implements Comparable<Character>
 	public Character(CharacterTemplate template, String name)
 	{
 		this.template = template;
-		maxHP = template.getHP().roll();
+		maxHP = roll(template.getHP());
 		damage = 0;
 		regenBlocked = false;
 		status = Status.NORMAL;
@@ -172,7 +171,7 @@ public class Character implements Comparable<Character>
 
 	public void heal(String amount)
 	{
-		int num = Functions.parseDiceRoll(amount).roll();
+		int num = roll(amount);
 		heal(num);
 	}
 
