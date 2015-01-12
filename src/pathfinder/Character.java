@@ -8,16 +8,22 @@ import pathfinder.enums.Status;
 
 import java.util.LinkedList;
 
-public class Character
+public class Character implements Comparable<Character>
 {
 	private CharacterTemplate template;
 	private int maxHP, damage, initiativeRoll;
-	private boolean regenBlocked;
+	private double randomModifier;
+	private boolean regenBlocked, isPC;
 	private LinkedList<Condition> conditions;
 	private SkillSet skills;
 	private Status status;
 	private String name;
 	public Character(CharacterTemplate template)
+	{
+		this(template, template.getName());
+	}
+
+	public Character(CharacterTemplate template, String name)
 	{
 		this.template = template;
 		maxHP = template.getHP().roll();
@@ -26,7 +32,9 @@ public class Character
 		status = Status.NORMAL;
 		conditions = new LinkedList<Condition>();
 		skills = new SkillSet();
-		name = template.getName();
+		this.name = name;
+		this.isPC = false;
+		randomModifier = Functions.random();
 	}
 
 	public void reset()
@@ -37,9 +45,25 @@ public class Character
 		status = Status.NORMAL;
 	}
 
+	public boolean isPC()
+	{
+		return isPC;
+	}
+
+	public void setPC()
+	{
+		isPC = true;
+	}
+
+	public void setNotPC()
+	{
+		isPC = false;
+	}
+
 	public void rollInitiative()
 	{
 		initiativeRoll = roll() + template.getInitiativeModifier();
+		randomModifier = Functions.random();
 	}
 
 	public void addCondition(Condition cond)
@@ -169,6 +193,21 @@ public class Character
 		}
 	}
 
+	public CharacterTemplate getTemplate()
+	{
+		return template;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public String getTemplateName()
+	{
+		return template.getName();
+	}
+
 	public int getSTRModifier()
 	{
 		return template.getSTR() / 2 - 5;
@@ -212,5 +251,25 @@ public class Character
 	public int getDamage()
 	{
 		return damage;
+	}
+
+	public int compareTo(Character c)
+	{
+		if (this == c)
+			return 0;
+		else if (this.initiativeRoll < c.initiativeRoll)
+			return 1;
+		else if (this.initiativeRoll > c.initiativeRoll)
+			return -1;
+		else if (this.template.getInitiativeModifier() < c.template.getInitiativeModifier())
+			return 1;
+		else if (this.template.getInitiativeModifier() > c.template.getInitiativeModifier())
+			return -1;
+		else if (this.randomModifier < c.randomModifier)
+			return 1;
+		else if (this.randomModifier > c.randomModifier)
+			return -1;
+		else
+			return 0;
 	}
 }

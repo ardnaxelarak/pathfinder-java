@@ -19,22 +19,15 @@ public class Main
 		String password = "dNLe7cncmWcbYDdU";
 		try
 		{
-			MySQLConnection conn = new MySQLConnection(url, user, password);
-			ResultSet rs = conn.execute("SELECT id, name FROM characters");
-			while (rs.next())
-			{
-				System.out.printf("%3d: %s\n", rs.getInt("id"), rs.getString("name"));
-			}
-			CharacterTemplate c = conn.loadCharacter(8);
-			System.out.println(c.getURL());
-			DiceRoll d = c.getHP();
-			System.out.println(d);
-			System.out.println(d.doubleAverage());
-			System.out.println(d.roll());
+			Functions.init(url, user, password);
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		Encounter enc = Functions.getEncounter(4);
+		if (enc != null)
+			enc.printCharacters();
+		Functions.close();
 	}
 }
