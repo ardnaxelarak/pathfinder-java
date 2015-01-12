@@ -19,11 +19,6 @@
 		<fileset dir="${lib.path}" includes="*.jar"/>
 	</path>
 
-	<path id="parsing.classpath">
-		<pathelement location="${parsing.build.src.path}"/>
-		<fileset dir="${lib.path}" includes="*.jar"/>
-	</path>
-
 	<pathconvert property="manifest.classpath" pathsep=" ">
 		<path refid="project.classpath"/>
 		<mapper>
@@ -41,8 +36,29 @@
 		<mkdir dir="${build.src.path}"/>
 	</target>
 
-	<target name="generate" depends="init">
+	<target name="generate.check">
+		<property name="build.src.path.absolute" location="${build.src.path}"/>
+		<uptodate property="generate.notRequired">
+			<srcfiles dir="${parsing.path}" includes="*.g4"/>
+			<chainedmapper>
+				<flattenmapper/>
+				<globmapper from="*" to="${build.src.path.absolute}/*"/>
+				<mapper>
+					<globmapper from="*.g4" to="*BaseListener.java"/>
+					<globmapper from="*.g4" to="*Lexer.java"/>
+					<globmapper from="*.g4" to="*Lexer.tokens"/>
+					<globmapper from="*.g4" to="*Listener.java"/>
+					<globmapper from="*.g4" to="*Parser.java"/>
+					<globmapper from="*.g4" to="*.tokens"/>
+				</mapper>
+			</chainedmapper>
+		</uptodate>
+	</target>
+
+	<target name="generate" depends="init,generate.check" unless="generate.notRequired">
 		<fileset dir="${parsing.path}" includes="*.g4" id="g4.files"/>
+		<resourcecount property="g4.files.count" refid="g4.files"/>
+		<echo>Generating ${g4.files.count} source files to ${build.src.path.absolute}</echo>
 		<pathconvert property="parsing.files" refid="g4.files" pathsep=" "/>
 
 		<java jar="${antlr.jar}" fork="true">
