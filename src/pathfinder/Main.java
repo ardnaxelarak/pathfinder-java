@@ -3,6 +3,7 @@ package pathfinder;
 import pathfinder.CharacterTemplate;
 import pathfinder.Functions;
 import pathfinder.MySQLConnection;
+import pathfinder.gui.MainDisplay;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,8 +26,15 @@ public class Main
 			e.printStackTrace();
 		}
 		Encounter enc = Functions.getEncounter(3);
+		MainDisplay md = new MainDisplay();
 		if (enc != null)
+		{
+			int num = enc.numCharacters();
+			for (int i = 0; i < num; i++)
+				md.addCharacter(enc.getCharacter(i));
 			enc.printCharacters();
+		}
+		md.next();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine())
 		{

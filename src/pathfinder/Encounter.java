@@ -58,6 +58,16 @@ public class Encounter
 		characters = newList;
 	}
 
+	public Character getCharacter(int index)
+	{
+		return characters[index];
+	}
+
+	public int numCharacters()
+	{
+		return characters.length;
+	}
+
 	public void printCharacters()
 	{
 		for (Character c : characters)

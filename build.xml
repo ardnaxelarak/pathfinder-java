@@ -70,6 +70,7 @@
 
 	<target name="compile" depends="generate">
 		<javac includeantruntime="false" debug="true" destdir="${build.classes.path}">
+			<compilerarg value="-Xlint:unchecked"/>
 			<src path="${src.path}"/>
 			<src path="${build.src.path}"/>
 			<classpath refid="project.classpath"/>
