@@ -29,6 +29,7 @@ public class Main
 		MainDisplay md = new MainDisplay();
 		if (enc != null)
 		{
+			enc.rollInitiative();
 			int num = enc.numCharacters();
 			for (int i = 0; i < num; i++)
 				md.addCharacter(enc.getCharacter(i));

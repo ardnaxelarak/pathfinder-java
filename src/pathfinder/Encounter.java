@@ -68,6 +68,12 @@ public class Encounter
 		return characters.length;
 	}
 
+	public void rollInitiative()
+	{
+		for (Character c : characters)
+			c.rollInitiative();
+	}
+
 	public void printCharacters()
 	{
 		for (Character c : characters)
