@@ -34,7 +34,7 @@ public class Main
 				md.addCharacter(enc.getCharacter(i));
 			enc.printCharacters();
 		}
-		md.next();
+		// md.next();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine())
 		{

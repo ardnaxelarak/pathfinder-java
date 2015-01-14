@@ -2,6 +2,8 @@ package pathfinder.gui;
 
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
+import pathfinder.OrderedCharacters;
+import pathfinder.event.EncounterListener;
 
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -15,19 +17,21 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-public class CharacterDisplay extends JPanel
+public class CharacterDisplay extends JPanel implements EncounterListener
 {
-	private NavigableSet<Character> characters;
+	private OrderedCharacters list;
 	private static final int WIDTH = 200;
 	private static final int HEIGHT = 50;
 	private static final int BORDER = 5;
 	private static final int LEFT_BORDER = 15;
 	private Font nameFont;
-	private Character current = null;
+	private Character current;
 	private Polygon arrow;
-	public CharacterDisplay()
+	public CharacterDisplay(OrderedCharacters list)
 	{
-		characters = new TreeSet<Character>();
+		this.list = list;
+		list.addListener(this);
+		current = list.getCurrent();
 		nameFont = new Font("Helvetica", Font.PLAIN, 12);
 		arrow = new Polygon();
 		arrow.addPoint(0, -5);
@@ -37,35 +41,36 @@ public class CharacterDisplay extends JPanel
 		updateSize();
 	}
 
+	@Override
+	public void characterUpdated(Character c)
+	{
+		repaint();
+	}
+
+	@Override
+	public void characterAdded(Character c)
+	{
+		updateSize();
+		repaint();
+	}
+
+	@Override
+	public void characterRemoved(Character c)
+	{
+		updateSize();
+		repaint();
+	}
+
+	@Override
+	public void selectionUpdated(Character c)
+	{
+		current = c;
+		repaint();
+	}
+
 	private void updateSize()
 	{
-		setPreferredSize(new Dimension(LEFT_BORDER + WIDTH + BORDER, BORDER + (BORDER + HEIGHT) * characters.size()));
-	}
-
-	public void addCharacter(Character c)
-	{
-		characters.add(c);
-		updateSize();
-	}
-
-	public void start()
-	{
-		current = characters.first();
-		repaint();
-	}
-
-	public Character next()
-	{
-		if (current == null)
-			current = characters.first();
-		else
-		{
-			current = characters.higher(current);
-			if (current == null)
-				current = characters.first();
-		}
-		repaint();
-		return current;
+		setPreferredSize(new Dimension(LEFT_BORDER + WIDTH + BORDER, BORDER + (BORDER + HEIGHT) * list.size()));
 	}
 
 	private void drawCharacter(Graphics2D g, Character c, int x, int y)
@@ -86,10 +91,8 @@ public class CharacterDisplay extends JPanel
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int y = BORDER;
-		Iterator<Character> it = characters.iterator();
-		while (it.hasNext())
+		for (Character c : list)
 		{
-			Character c = it.next();
 			g2.setColor(Color.darkGray);
 			if (c == current)
 			{
