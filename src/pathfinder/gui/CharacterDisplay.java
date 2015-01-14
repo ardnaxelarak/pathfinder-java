@@ -3,16 +3,18 @@ package pathfinder.gui;
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
+import pathfinder.Functions;
 import pathfinder.event.EncounterListener;
 
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.font.LineMetrics;
+import java.awt.RenderingHints;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -27,6 +29,7 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 	private Font nameFont;
 	private Character current;
 	private Polygon arrow;
+	private Color pcColor, npcColor;
 	public CharacterDisplay(Encounter list)
 	{
 		this.list = list;
@@ -38,6 +41,8 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 		arrow.addPoint(0, 5);
 		arrow.addPoint(5, 0);
 		arrow.translate(5, HEIGHT / 2);
+		pcColor = new Color(79, 209, 226);
+		npcColor = new Color(250, 112, 112);
 		updateSize();
 	}
 
@@ -81,14 +86,16 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 	private void drawCharacter(Graphics2D g, Character c, int x, int y)
 	{
 		if (c.isPC())
-			g.setColor(Color.blue);
+			g.setColor(pcColor);
 		else
-			g.setColor(Color.red);
+			g.setColor(npcColor);
 		g.fillRect(x, y, WIDTH, HEIGHT);
 		g.setFont(nameFont);
 		g.setColor(Color.black);
-		LineMetrics met = nameFont.getLineMetrics(c.getName(), g.getFontRenderContext());
-		g.drawString(c.getName(), x + 5, y + met.getAscent() + 1);
+		FontMetrics met = g.getFontMetrics();
+		g.drawString(c.getName(), x + 5, y + met.getAscent() + 3);
+		String init = String.format("%d (%s)", c.getInitiativeRoll(), Functions.modifierString(c.getTemplate().getInitiativeModifier()));
+		g.drawString(init, x + WIDTH - 5 - met.stringWidth(init), y + met.getAscent() + 3);
 	}
 
 	@Override
@@ -96,6 +103,8 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 	{
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+							RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int y = BORDER;

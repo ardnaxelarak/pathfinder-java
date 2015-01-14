@@ -247,6 +247,11 @@ public class Character implements Comparable<Character>
 		return maxHP - damage;
 	}
 
+	public int getInitiativeRoll()
+	{
+		return initiativeRoll;
+	}
+
 	public int getDamage()
 	{
 		return damage;

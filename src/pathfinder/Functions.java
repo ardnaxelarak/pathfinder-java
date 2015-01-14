@@ -79,6 +79,14 @@ public class Functions
 		return rand.nextDouble();
 	}
 
+	public static String modifierString(int modifier)
+	{
+		if (modifier < 0)
+			return String.format("%d", modifier);
+		else
+			return String.format("+%d", modifier);
+	}
+
 	public static void log(String message, Object... args)
 	{
 	}
