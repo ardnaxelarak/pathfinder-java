@@ -8,6 +8,7 @@ import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -31,6 +32,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		super("Pathfinder");
 
 		setPreferredSize(new Dimension(800, 600));
+		setBackground(Color.white);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		characters = new OrderedCharacters();
@@ -50,9 +52,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		messages.setEditable(false);
 		messages.setLineWrap(true);
 		messages.setWrapStyleWord(true);
+		messages.addKeyListener(this);
 
 		getContentPane().add(chPane, BorderLayout.LINE_END);
 		JPanel left = new JPanel(new BorderLayout(0, 0));
+		left.setBackground(Color.white);
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
 
