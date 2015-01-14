@@ -1,5 +1,6 @@
 package pathfinder;
 
+import pathfinder.Group;
 import pathfinder.MySQLConnection;
 import pathfinder.parsing.DiceRollLexer;
 import pathfinder.parsing.DiceRollParser;
@@ -35,7 +36,7 @@ public class Functions
 		}
 	}
 
-	public static Encounter getEncounter(int id)
+	public static Group getEncounter(int id)
 	{
 		try
 		{
@@ -43,6 +44,19 @@ public class Functions
 		}
 		catch (SQLException e)
 		{
+			return null;
+		}
+	}
+
+	public static Group getParty(int campaign)
+	{
+		try
+		{
+			return conn.loadParty(campaign);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 			return null;
 		}
 	}

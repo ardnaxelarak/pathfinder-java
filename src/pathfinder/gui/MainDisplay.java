@@ -1,8 +1,8 @@
 package pathfinder.gui;
 
 import pathfinder.Character;
+import pathfinder.Group;
 import pathfinder.Encounter;
-import pathfinder.OrderedCharacters;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 public class MainDisplay extends JFrame implements KeyListener, EncounterListener
 {
 	private CharacterDisplay chdisp;
-	private OrderedCharacters characters;
+	private Encounter characters;
 	private InputStatus instat = InputStatus.DISABLED;
 	private Character current;
 	private JTextArea messages;
@@ -39,7 +39,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		setBackground(Color.white);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		characters = new OrderedCharacters();
+		characters = new Encounter();
 		characters.addListener(this);
 
 		chdisp = new CharacterDisplay(characters);

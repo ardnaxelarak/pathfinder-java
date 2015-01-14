@@ -2,7 +2,7 @@ package pathfinder.gui;
 
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
-import pathfinder.OrderedCharacters;
+import pathfinder.Encounter;
 import pathfinder.event.EncounterListener;
 
 import javax.swing.JPanel;
@@ -19,7 +19,7 @@ import java.util.TreeSet;
 
 public class CharacterDisplay extends JPanel implements EncounterListener
 {
-	private OrderedCharacters list;
+	private Encounter list;
 	private static final int WIDTH = 200;
 	private static final int HEIGHT = 50;
 	private static final int BORDER = 5;
@@ -27,7 +27,7 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 	private Font nameFont;
 	private Character current;
 	private Polygon arrow;
-	public CharacterDisplay(OrderedCharacters list)
+	public CharacterDisplay(Encounter list)
 	{
 		this.list = list;
 		list.addListener(this);
@@ -80,7 +80,10 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 
 	private void drawCharacter(Graphics2D g, Character c, int x, int y)
 	{
-		g.setColor(Color.red);
+		if (c.isPC())
+			g.setColor(Color.blue);
+		else
+			g.setColor(Color.red);
 		g.fillRect(x, y, WIDTH, HEIGHT);
 		g.setFont(nameFont);
 		g.setColor(Color.black);
@@ -96,7 +99,7 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int y = BORDER;
-		for (Character c : list)
+		for (Character c : list.shallowCopy())
 		{
 			g2.setColor(Color.darkGray);
 			if (c == current)

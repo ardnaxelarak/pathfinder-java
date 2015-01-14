@@ -1,84 +1,132 @@
 package pathfinder;
 
-import pathfinder.CharacterTemplate;
 import pathfinder.Character;
+import pathfinder.CharacterTemplate;
+import pathfinder.event.EncounterListener;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.LinkedList;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
-public class Encounter
+public class Encounter implements Iterable<Character>
 {
-	Character[] characters;
-	public Encounter(ResultSet set) throws SQLException
-	{
-		int charID, num;
-		LinkedList<Character> list = new LinkedList<Character>();
-		CharacterTemplate ct;
-		while (set.next())
-		{
-			charID = set.getInt("creature");
-			num = Functions.roll(set.getString("num"));
-			ct = Functions.getTemplate(charID);
-			if (ct != null)
-			{
-				if (num == 1)
-					list.add(new Character(ct));
-				else
-					for (int i = 0; i < num; i++)
-						list.add(new Character(ct, String.format("%s %d", ct.getName(), i + 1)));
-			}
-		}
-		characters = new Character[list.size()];
-		characters = list.toArray(characters);
-	}
-
+	private NavigableSet<Character> characters;
+	private Character current = null;
+	private List<EncounterListener> listeners;
+	private int round;
 	public Encounter()
 	{
-		characters = new Character[0];
+		listeners = new LinkedList<EncounterListener>();
+		characters = new TreeSet<Character>();
 	}
 
-	public void addCharacter(CharacterTemplate ct, String name)
+	public void addListener(EncounterListener listener)
 	{
-		addCharacter(new Character(ct, name));
+		listeners.add(listener);
 	}
 
-	public void addCharacter(CharacterTemplate ct)
+	private void characterUpdated(Character c)
 	{
-		addCharacter(new Character(ct));
+		for (EncounterListener listener : listeners)
+			listener.characterUpdated(c);
+	}
+
+	private void characterAdded(Character c)
+	{
+		for (EncounterListener listener : listeners)
+			listener.characterAdded(c);
+	}
+
+	private void characterRemoved(Character c)
+	{
+		for (EncounterListener listener : listeners)
+			listener.characterRemoved(c);
+	}
+
+	private void selectionUpdated(Character c)
+	{
+		for (EncounterListener listener : listeners)
+			listener.selectionUpdated(c);
 	}
 
 	public void addCharacter(Character c)
 	{
-		Character[] newList = new Character[characters.length + 1];
-		int k = 0;
-		for (Character ch : characters)
-			newList[k++] = ch;
-		newList[k++] = c;
-		characters = newList;
+		characters.add(c);
+		characterAdded(c);
 	}
 
-	public Character getCharacter(int index)
+	private void setRound(int round)
 	{
-		return characters[index];
+		this.round = round;
+		for (EncounterListener listener : listeners)
+			listener.roundUpdated();
 	}
 
-	public int numCharacters()
+	public void start()
 	{
-		return characters.length;
+		round = 0;
+		current = characters.first();
+		selectionUpdated(current);
 	}
 
-	public void rollInitiative()
+	public Character next()
 	{
-		for (Character c : characters)
-			c.rollInitiative();
-	}
-
-	public void printCharacters()
-	{
-		for (Character c : characters)
+		if (current == null)
+			current = characters.first();
+		else
 		{
-			System.out.printf("%s [%d / %d]\n", c.getName(), c.getCurrentHP(), c.getMaxHP());
+			current = characters.higher(current);
+			if (current == null)
+			{
+				current = characters.first();
+				setRound(round + 1);
+			}
 		}
+		selectionUpdated(current);
+		return current;
+	}
+
+	public Character prev()
+	{
+		if (current == null)
+			current = characters.last();
+		else
+		{
+			current = characters.lower(current);
+			if (current == null)
+			{
+				current = characters.last();
+				setRound(round - 1);
+			}
+		}
+		selectionUpdated(current);
+		return current;
+	}
+
+	public int size()
+	{
+		return characters.size();
+	}
+
+	public int getRound()
+	{
+		return round;
+	}
+
+	public Character getCurrent()
+	{
+		return current;
+	}
+
+	public Iterator<Character> iterator()
+	{
+		return characters.iterator();
+	}
+
+	public Iterable<Character> shallowCopy()
+	{
+		return new LinkedList<Character>(characters);
 	}
 }
