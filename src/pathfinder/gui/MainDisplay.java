@@ -6,6 +6,7 @@ import pathfinder.OrderedCharacters;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
+import pathfinder.gui.SelectionDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,6 +17,7 @@ import java.awt.event.KeyListener;
 import javax.swing.BoxLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -27,6 +29,8 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	private InputStatus instat = InputStatus.DISABLED;
 	private Character current;
 	private JTextArea messages;
+	private JLabel roundCounter;
+	private SelectionDialog sd;
 	public MainDisplay()
 	{
 		super("Pathfinder");
@@ -54,11 +58,20 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		messages.setWrapStyleWord(true);
 		messages.addKeyListener(this);
 
-		getContentPane().add(chPane, BorderLayout.LINE_END);
+		roundCounter = new JLabel(String.format("Round %d", characters.getRound()), JLabel.CENTER);
+
+		JPanel right = new JPanel(new BorderLayout(0, 0));
+		right.setBackground(Color.white);
+		right.add(roundCounter, BorderLayout.PAGE_START);
+		right.add(chPane, BorderLayout.CENTER);
+
+		getContentPane().add(right, BorderLayout.LINE_END);
 		JPanel left = new JPanel(new BorderLayout(0, 0));
 		left.setBackground(Color.white);
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
+
+		sd = new SelectionDialog(this);
 
 		pack();
 		setVisible(true);
@@ -92,6 +105,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		current = c;
 	}
 
+	@Override
+	public void roundUpdated()
+	{
+		roundCounter.setText(String.format("Round %d", characters.getRound()));
+	}
+
 	public void nextCharacter()
 	{
 		characters.next();
@@ -120,6 +139,9 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 				break;
 			case KeyEvent.VK_LEFT:
 				prevCharacter();
+				break;
+			case KeyEvent.VK_UP:
+				sd.showDialog();
 				break;
 			}
 			break;

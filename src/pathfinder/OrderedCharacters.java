@@ -57,6 +57,13 @@ public class OrderedCharacters implements Iterable<Character>
 		characterAdded(c);
 	}
 
+	private void setRound(int round)
+	{
+		this.round = round;
+		for (EncounterListener listener : listeners)
+			listener.roundUpdated();
+	}
+
 	public void start()
 	{
 		round = 0;
@@ -74,7 +81,7 @@ public class OrderedCharacters implements Iterable<Character>
 			if (current == null)
 			{
 				current = characters.first();
-				round++;
+				setRound(round + 1);
 			}
 		}
 		selectionUpdated(current);
@@ -89,7 +96,10 @@ public class OrderedCharacters implements Iterable<Character>
 		{
 			current = characters.lower(current);
 			if (current == null)
+			{
 				current = characters.last();
+				setRound(round - 1);
+			}
 		}
 		selectionUpdated(current);
 		return current;
@@ -98,6 +108,11 @@ public class OrderedCharacters implements Iterable<Character>
 	public int size()
 	{
 		return characters.size();
+	}
+
+	public int getRound()
+	{
+		return round;
 	}
 
 	public Character getCurrent()

@@ -68,6 +68,11 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 		repaint();
 	}
 
+	@Override
+	public void roundUpdated()
+	{
+	}
+
 	private void updateSize()
 	{
 		setPreferredSize(new Dimension(LEFT_BORDER + WIDTH + BORDER, BORDER + (BORDER + HEIGHT) * list.size()));

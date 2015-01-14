@@ -8,4 +8,5 @@ public interface EncounterListener
 	public void characterAdded(Character c);
 	public void characterRemoved(Character c);
 	public void selectionUpdated(Character c);
+	public void roundUpdated();
 }
