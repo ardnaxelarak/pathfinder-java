@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.util.Collection;
+
 import javax.swing.BoxLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -84,18 +86,18 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		characters.addCharacter(c);
 	}
 
+	public void addGroup(Group g)
+	{
+		characters.addGroup(g);
+	}
+
 	@Override
-	public void characterUpdated(Character c)
+	public void charactersAdded(Collection<Character> list)
 	{
 	}
 
 	@Override
-	public void characterAdded(Character c)
-	{
-	}
-
-	@Override
-	public void characterRemoved(Character c)
+	public void charactersRemoved(Collection<Character> list)
 	{
 	}
 

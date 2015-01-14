@@ -15,6 +15,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -47,20 +48,14 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 	}
 
 	@Override
-	public void characterUpdated(Character c)
-	{
-		repaint();
-	}
-
-	@Override
-	public void characterAdded(Character c)
+	public void charactersAdded(Collection<Character> list)
 	{
 		updateSize();
 		repaint();
 	}
 
 	@Override
-	public void characterRemoved(Character c)
+	public void charactersRemoved(Collection<Character> list)
 	{
 		updateSize();
 		repaint();
@@ -108,17 +103,20 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int y = BORDER;
-		for (Character c : list.shallowCopy())
+		synchronized(list)
 		{
-			g2.setColor(Color.darkGray);
-			if (c == current)
+			for (Character c : list)
 			{
-				arrow.translate(0, y);
-				g2.fillPolygon(arrow);
-				arrow.translate(0, -y);
+				g2.setColor(Color.darkGray);
+				if (c == current)
+				{
+					arrow.translate(0, y);
+					g2.fillPolygon(arrow);
+					arrow.translate(0, -y);
+				}
+				drawCharacter(g2, c, LEFT_BORDER, y);
+				y += BORDER + HEIGHT;
 			}
-			drawCharacter(g2, c, LEFT_BORDER, y);
-			y += BORDER + HEIGHT;
 		}
 	}
 }

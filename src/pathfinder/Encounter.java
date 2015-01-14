@@ -4,6 +4,10 @@ import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.event.EncounterListener;
 
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.synchronizedSortedSet;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
@@ -27,22 +31,16 @@ public class Encounter implements Iterable<Character>
 		listeners.add(listener);
 	}
 
-	private void characterUpdated(Character c)
+	private void charactersAdded(Collection<Character> list)
 	{
 		for (EncounterListener listener : listeners)
-			listener.characterUpdated(c);
+			listener.charactersAdded(list);
 	}
 
-	private void characterAdded(Character c)
+	private void charactersRemoved(Collection<Character> list)
 	{
 		for (EncounterListener listener : listeners)
-			listener.characterAdded(c);
-	}
-
-	private void characterRemoved(Character c)
-	{
-		for (EncounterListener listener : listeners)
-			listener.characterRemoved(c);
+			listener.charactersRemoved(list);
 	}
 
 	private void selectionUpdated(Character c)
@@ -53,8 +51,23 @@ public class Encounter implements Iterable<Character>
 
 	public void addCharacter(Character c)
 	{
-		characters.add(c);
-		characterAdded(c);
+		synchronized(this)
+		{
+			characters.add(c);
+		}
+		charactersAdded(singleton(c));
+	}
+
+	public void addGroup(Group g)
+	{
+		Collection<Character> list = new LinkedList<Character>();
+		for (Character c : g)
+			list.add(c);
+		synchronized(this)
+		{
+			characters.addAll(list);
+		}
+		charactersAdded(list);
 	}
 
 	private void setRound(int round)
@@ -123,10 +136,5 @@ public class Encounter implements Iterable<Character>
 	public Iterator<Character> iterator()
 	{
 		return characters.iterator();
-	}
-
-	public Iterable<Character> shallowCopy()
-	{
-		return new LinkedList<Character>(characters);
 	}
 }

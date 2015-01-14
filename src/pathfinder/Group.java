@@ -3,16 +3,18 @@ package pathfinder;
 import pathfinder.CharacterTemplate;
 import pathfinder.Character;
 
+import static java.util.Collections.unmodifiableCollection;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Group
+public class Group implements Iterable<Character>
 {
-	Character[] characters;
+	LinkedList<Character> characters;
 
 	public Group()
 	{
-		characters = new Character[0];
+		characters = new LinkedList<Character>();
 	}
 
 	public void addCharacter(CharacterTemplate ct, String name)
@@ -27,39 +29,27 @@ public class Group
 
 	public void addCharacter(Character c)
 	{
-		addAll(c);
-	}
-
-	public void addAll(Character... list)
-	{
-		Character[] newList = new Character[characters.length + list.length];
-		int k = 0;
-		for (Character ch : characters)
-			newList[k++] = ch;
-		for (Character ch : list)
-			newList[k++] = ch;
-		characters = newList;
+		characters.add(c);
 	}
 
 	public void addAll(Collection<Character> list)
 	{
-		Character[] newList = new Character[characters.length + list.size()];
-		int k = 0;
-		for (Character ch : characters)
-			newList[k++] = ch;
-		for (Character ch : list)
-			newList[k++] = ch;
-		characters = newList;
+		characters.addAll(list);
 	}
 
-	public Character getCharacter(int index)
+	public Character get(int index)
 	{
-		return characters[index];
+		return characters.get(index);
 	}
 
-	public int numCharacters()
+	public int size()
 	{
-		return characters.length;
+		return characters.size();
+	}
+
+	public Iterator<Character> iterator()
+	{
+		return unmodifiableCollection(characters).iterator();
 	}
 
 	public void rollInitiative()

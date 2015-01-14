@@ -30,18 +30,14 @@ public class Main
 		if (enc != null)
 		{
 			enc.rollInitiative();
-			int num = enc.numCharacters();
-			for (int i = 0; i < num; i++)
-				md.addCharacter(enc.getCharacter(i));
+			md.addGroup(enc);
 			enc.printCharacters();
 		}
 		Group party = Functions.getParty(1);
 		if (party != null)
 		{
 			party.rollInitiative();
-			int num = party.numCharacters();
-			for (int i = 0; i < num; i++)
-				md.addCharacter(party.getCharacter(i));
+			md.addGroup(party);
 			party.printCharacters();
 		}
 		Scanner sc = new Scanner(System.in);
