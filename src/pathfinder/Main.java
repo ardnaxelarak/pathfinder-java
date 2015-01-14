@@ -31,14 +31,12 @@ public class Main
 		{
 			enc.rollInitiative();
 			md.addGroup(enc);
-			enc.printCharacters();
 		}
 		Group party = Functions.getParty(1);
 		if (party != null)
 		{
 			party.rollInitiative();
 			md.addGroup(party);
-			party.printCharacters();
 		}
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine())

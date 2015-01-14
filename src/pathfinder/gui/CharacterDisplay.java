@@ -91,6 +91,8 @@ public class CharacterDisplay extends JPanel implements EncounterListener
 		g.drawString(c.getName(), x + 5, y + met.getAscent() + 3);
 		String init = String.format("%d (%s)", c.getInitiativeRoll(), Functions.modifierString(c.getTemplate().getInitiativeModifier()));
 		g.drawString(init, x + WIDTH - 5 - met.stringWidth(init), y + met.getAscent() + 3);
+		String hp = String.format("[%d / %d]", c.getCurrentHP(), c.getMaxHP());
+		g.drawString(hp, x + WIDTH - 5 - met.stringWidth(hp), y + HEIGHT - met.getDescent() - 3);
 	}
 
 	@Override
