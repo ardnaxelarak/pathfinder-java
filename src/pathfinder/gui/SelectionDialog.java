@@ -1,5 +1,7 @@
 package pathfinder.gui;
 
+import pathfinder.gui.Resources;
+
 import java.awt.Frame;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -9,7 +11,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JRootPane;
 
 public class SelectionDialog extends JDialog implements ComponentListener, KeyListener
@@ -21,13 +22,11 @@ public class SelectionDialog extends JDialog implements ComponentListener, KeyLi
 		addKeyListener(this);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setUndecorated(true);
+		setBackground(Resources.DIALOG_BACK);
 		getRootPane().setWindowDecorationStyle(JRootPane.NONE);
-
-		JLabel label = new JLabel("hi");
-		getContentPane().add(label);
 	}
 
-	public void showDialog()
+	protected void showDialog()
 	{
 		pack();
 		setLocationRelativeTo(getOwner());

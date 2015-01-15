@@ -137,4 +137,16 @@ public class Encounter implements Iterable<Character>
 	{
 		return characters.iterator();
 	}
+
+	public Collection<Character> getPCs()
+	{
+		Collection<Character> list = new LinkedList<Character>();
+		synchronized(this)
+		{
+			for (Character c : characters)
+				if (c.isPC())
+					list.add(c);
+		}
+		return list;
+	}
 }

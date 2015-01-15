@@ -4,6 +4,7 @@ import static pathfinder.Functions.log;
 import static pathfinder.Functions.roll;
 import pathfinder.CharacterTemplate;
 import pathfinder.enums.Status;
+import pathfinder.event.CharacterListener;
 
 import java.util.LinkedList;
 
@@ -17,6 +18,8 @@ public class Character implements Comparable<Character>
 	private SkillSet skills;
 	private Status status;
 	private String name;
+	private char identifier;
+	private LinkedList<CharacterListener> listeners;
 	public Character(CharacterTemplate template)
 	{
 		this(template, template.getName());
@@ -34,6 +37,18 @@ public class Character implements Comparable<Character>
 		this.name = name;
 		this.isPC = false;
 		randomModifier = Functions.random();
+		identifier = ' ';
+		listeners = new LinkedList<CharacterListener>();
+	}
+
+	public void addListener(CharacterListener l)
+	{
+		listeners.add(l);
+	}
+
+	public void removeListener(CharacterListener l)
+	{
+		listeners.remove(l);
 	}
 
 	public void reset()
@@ -61,8 +76,7 @@ public class Character implements Comparable<Character>
 
 	public void rollInitiative()
 	{
-		initiativeRoll = roll() + template.getInitiativeModifier();
-		randomModifier = Functions.random();
+		setInitiativeRoll(roll() + template.getInitiativeModifier());
 	}
 
 	public void addCondition(Condition cond)
@@ -252,9 +266,27 @@ public class Character implements Comparable<Character>
 		return initiativeRoll;
 	}
 
+	public void setInitiativeRoll(int roll)
+	{
+		initiativeRoll = roll;
+		randomModifier = Functions.random();
+		for (CharacterListener cl : listeners)
+			cl.initiativeModified(this);
+	}
+
 	public int getDamage()
 	{
 		return damage;
+	}
+
+	public char getIdentifier()
+	{
+		return identifier;
+	}
+
+	public void setIdentifier(char identifier)
+	{
+		this.identifier = identifier;
 	}
 
 	public int compareTo(Character c)

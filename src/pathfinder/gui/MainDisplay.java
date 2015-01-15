@@ -1,8 +1,10 @@
 package pathfinder.gui;
 
 import pathfinder.Character;
+import pathfinder.CharacterMapping;
 import pathfinder.Group;
 import pathfinder.Encounter;
+import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
@@ -27,12 +29,14 @@ import javax.swing.JTextArea;
 public class MainDisplay extends JFrame implements KeyListener, EncounterListener
 {
 	private CharacterDisplay chdisp;
+	private CharacterMapping cm;
 	private Encounter characters;
 	private InputStatus instat = InputStatus.DISABLED;
 	private Character current;
 	private JTextArea messages;
 	private JLabel roundCounter;
-	private SelectionDialog sd;
+	private InitiativeDialog id;
+	private MappingComparator mc;
 	public MainDisplay()
 	{
 		super("Pathfinder");
@@ -43,6 +47,8 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		characters = new Encounter();
 		characters.addListener(this);
+		cm = new CharacterMapping();
+		mc = new MappingComparator(cm);
 
 		chdisp = new CharacterDisplay(characters);
 		JScrollPane chPane = new JScrollPane(chdisp,
@@ -73,7 +79,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
 
-		sd = new SelectionDialog(this);
+		id = new InitiativeDialog(this, mc);
 
 		pack();
 		setVisible(true);
@@ -94,11 +100,15 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	@Override
 	public void charactersAdded(Collection<Character> list)
 	{
+		for (Character c : list)
+			cm.addCharacter(c);
 	}
 
 	@Override
 	public void charactersRemoved(Collection<Character> list)
 	{
+		for (Character c : list)
+			cm.removeCharacter(c);
 	}
 
 	@Override
@@ -123,9 +133,27 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		characters.prev();
 	}
 
+	public boolean rollInitiatives()
+	{
+		return id.showInitiativeDialog(characters.getPCs());
+	}
+
+	public void sendMessage(String format, Object... args)
+	{
+		messages.append(String.format(format, args) + "\n");
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
+		char c = e.getKeyChar();
+		if (c == 'i')
+		{
+			if (rollInitiatives())
+				sendMessage("Successfully obtained party initiatives.");
+			else
+				sendMessage("Failed to obtain party initiatives.");
+		}
 	}
 
 	@Override
@@ -141,9 +169,6 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 				break;
 			case KeyEvent.VK_LEFT:
 				prevCharacter();
-				break;
-			case KeyEvent.VK_UP:
-				sd.showDialog();
 				break;
 			}
 			break;
