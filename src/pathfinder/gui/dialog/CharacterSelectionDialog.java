@@ -15,17 +15,11 @@ import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.MultiColoredTextColumn;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.swing.JPanel;
 
 public class CharacterSelectionDialog extends SelectionDialog
 {
@@ -33,12 +27,11 @@ public class CharacterSelectionDialog extends SelectionDialog
 	private boolean[] selected;
 	private boolean multiple;
 	private char[] charIndex;
-	private int index;
 	private boolean finished;
 	private MappingComparator mc;
 	private CharacterMapping cm;
 	private DisplayPanel dp;
-	private CharacterTextColumn nameColumn, idColumn, idColumn2;
+	private CharacterTextColumn nameColumn, idColumn;
 	private MultiColoredTextColumn selectedColumn;
 	private CharacterBorderColumn borderColumn;
 	public CharacterSelectionDialog(Frame owner, MappingComparator mc, CharacterMapping cm)

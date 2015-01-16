@@ -9,6 +9,7 @@ import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
 import pathfinder.gui.dialog.CharacterSelectionDialog;
+import pathfinder.gui.dialog.CharacterOrderingDialog;
 import pathfinder.gui.dialog.InitiativeDialog;
 
 import java.awt.BorderLayout;
@@ -18,6 +19,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Collections;
 
 import javax.swing.BoxLayout;
 import javax.swing.BorderFactory;
@@ -38,6 +41,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	private JLabel roundCounter;
 	private InitiativeDialog id;
 	private CharacterSelectionDialog csd;
+	private CharacterOrderingDialog cod;
 	private MappingComparator mc;
 	public MainDisplay()
 	{
@@ -83,6 +87,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 
 		id = new InitiativeDialog(this, mc);
 		csd = new CharacterSelectionDialog(this, mc, cm);
+		cod = new CharacterOrderingDialog(this, mc, cm);
 
 		pack();
 		setVisible(true);
@@ -164,6 +169,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 				sendMessage("No character selected.");
 			else
 				sendMessage("Selected %s.", ch.getName());
+		}
+		if (c == 'o')
+		{
+			List<Character> party = characters.getPCs();
+			Collections.sort(party, mc);
+			cod.showOrderingDialog(party);
 		}
 	}
 

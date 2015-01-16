@@ -140,9 +140,9 @@ public class Encounter implements Iterable<Character>
 		return characters.iterator();
 	}
 
-	public Collection<Character> getPCs()
+	public List<Character> getPCs()
 	{
-		Collection<Character> list = new LinkedList<Character>();
+		List<Character> list = new LinkedList<Character>();
 		synchronized(this)
 		{
 			for (Character c : characters)
@@ -152,9 +152,9 @@ public class Encounter implements Iterable<Character>
 		return list;
 	}
 
-	public Collection<Character> getCharacters()
+	public List<Character> getCharacters()
 	{
-		Collection<Character> list = new LinkedList<Character>();
+		List<Character> list = new LinkedList<Character>();
 		synchronized(this)
 		{
 			for (Character c : characters)
