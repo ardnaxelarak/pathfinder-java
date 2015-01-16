@@ -8,7 +8,7 @@ import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
-import pathfinder.gui.SelectionDialog;
+import pathfinder.gui.dialog.InitiativeDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

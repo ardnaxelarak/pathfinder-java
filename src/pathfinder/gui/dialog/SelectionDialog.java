@@ -1,4 +1,4 @@
-package pathfinder.gui;
+package pathfinder.gui.dialog;
 
 import pathfinder.gui.Resources;
 

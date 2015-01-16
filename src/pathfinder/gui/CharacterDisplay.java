@@ -92,7 +92,7 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		else
 			g.setColor(Resources.NPC_COLOR);
 		g.fillRect(x, y, WIDTH, HEIGHT);
-		g.setFont(Resources.FONT12);
+		g.setFont(Resources.FONT_12);
 		g.setColor(Color.black);
 		FontMetrics met = g.getFontMetrics();
 		g.drawString(c.getName(), x + 5, y + met.getAscent() + 3);
