@@ -2,6 +2,7 @@ package pathfinder;
 
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
+import pathfinder.comps.InitiativeComparator;
 import pathfinder.event.EncounterListener;
 
 import static java.util.Collections.singleton;
@@ -23,7 +24,8 @@ public class Encounter implements Iterable<Character>
 	public Encounter()
 	{
 		listeners = new LinkedList<EncounterListener>();
-		characters = new TreeSet<Character>();
+		InitiativeComparator ic = new InitiativeComparator();
+		characters = new TreeSet<Character>(ic);
 	}
 
 	public void addListener(EncounterListener listener)

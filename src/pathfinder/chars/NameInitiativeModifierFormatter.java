@@ -8,6 +8,6 @@ public class NameInitiativeModifierFormatter implements CharacterFormatter
 {
 	public String getString(Character c)
 	{
-		return String.format("%s (%s)", c.getName(), modifierString(c.getTemplate().getInitiativeModifier()));
+		return String.format("%s (%s)", c.getName(), modifierString(c.getInitiativeModifier()));
 	}
 }

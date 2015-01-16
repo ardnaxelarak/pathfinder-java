@@ -8,7 +8,7 @@ import pathfinder.event.CharacterListener;
 
 import java.util.LinkedList;
 
-public class Character implements Comparable<Character>
+public class Character
 {
 	private CharacterTemplate template;
 	private int maxHP, damage, initiativeRoll;
@@ -18,7 +18,6 @@ public class Character implements Comparable<Character>
 	private SkillSet skills;
 	private Status status;
 	private String name;
-	private char identifier;
 	private LinkedList<CharacterListener> listeners;
 	public Character(CharacterTemplate template)
 	{
@@ -37,7 +36,6 @@ public class Character implements Comparable<Character>
 		this.name = name;
 		this.isPC = false;
 		randomModifier = Functions.random();
-		identifier = ' ';
 		listeners = new LinkedList<CharacterListener>();
 	}
 
@@ -261,6 +259,11 @@ public class Character implements Comparable<Character>
 		return maxHP - damage;
 	}
 
+	public int getInitiativeModifier()
+	{
+		return template.getInitiativeModifier();
+	}
+
 	public int getInitiativeRoll()
 	{
 		return initiativeRoll;
@@ -274,38 +277,13 @@ public class Character implements Comparable<Character>
 			cl.initiativeModified(this);
 	}
 
+	public double getRandomModifier()
+	{
+		return randomModifier;
+	}
+
 	public int getDamage()
 	{
 		return damage;
-	}
-
-	public char getIdentifier()
-	{
-		return identifier;
-	}
-
-	public void setIdentifier(char identifier)
-	{
-		this.identifier = identifier;
-	}
-
-	public int compareTo(Character c)
-	{
-		if (this == c)
-			return 0;
-		else if (this.initiativeRoll < c.initiativeRoll)
-			return 1;
-		else if (this.initiativeRoll > c.initiativeRoll)
-			return -1;
-		else if (this.template.getInitiativeModifier() < c.template.getInitiativeModifier())
-			return 1;
-		else if (this.template.getInitiativeModifier() > c.template.getInitiativeModifier())
-			return -1;
-		else if (this.randomModifier < c.randomModifier)
-			return 1;
-		else if (this.randomModifier > c.randomModifier)
-			return -1;
-		else
-			return 0;
 	}
 }

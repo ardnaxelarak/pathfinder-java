@@ -35,7 +35,6 @@ public class CharacterMapping
 			else
 				id = (char)('A' + i - 26);
 		}
-		c.setIdentifier(id);
 		return id;
 	}
 
