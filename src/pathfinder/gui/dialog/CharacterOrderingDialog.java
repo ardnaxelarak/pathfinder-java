@@ -20,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -56,7 +57,7 @@ public class CharacterOrderingDialog extends SelectionDialog
 		getContentPane().add(dp);
 	}
 
-	public Character[] showOrderingDialog(Collection<Character> list)
+	public Character[] showOrderingDialog(List<Character> list)
 	{
 		if (list.isEmpty())
 			return null;

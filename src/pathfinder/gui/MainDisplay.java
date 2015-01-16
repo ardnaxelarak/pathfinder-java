@@ -8,9 +8,7 @@ import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
-import pathfinder.gui.dialog.CharacterSelectionDialog;
-import pathfinder.gui.dialog.CharacterOrderingDialog;
-import pathfinder.gui.dialog.InitiativeDialog;
+import pathfinder.gui.dialog.DialogHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,9 +37,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	private Character current;
 	private JTextArea messages;
 	private JLabel roundCounter;
-	private InitiativeDialog id;
-	private CharacterSelectionDialog csd;
-	private CharacterOrderingDialog cod;
+	private DialogHandler dh;
 	private MappingComparator mc;
 	public MainDisplay()
 	{
@@ -85,9 +81,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
 
-		id = new InitiativeDialog(this, mc);
-		csd = new CharacterSelectionDialog(this, mc, cm);
-		cod = new CharacterOrderingDialog(this, mc, cm);
+		dh = new DialogHandler(this, mc, cm);
 
 		pack();
 		setVisible(true);
@@ -143,7 +137,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 
 	public boolean rollInitiatives()
 	{
-		return id.showInitiativeDialog(characters.getPCs());
+		return dh.showInitiativeDialog(characters.getPCs());
 	}
 
 	public void sendMessage(String format, Object... args)
@@ -164,7 +158,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		}
 		if (c == 's')
 		{
-			Character ch = csd.showSingleSelectionDialog(characters.getCharacters());
+			Character ch = dh.showSingleSelectionDialog(characters.getCharacters());
 			if (ch == null)
 				sendMessage("No character selected.");
 			else
@@ -174,7 +168,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		{
 			List<Character> party = characters.getPCs();
 			Collections.sort(party, mc);
-			cod.showOrderingDialog(party);
+			dh.showOrderingDialog(party);
 		}
 	}
 
