@@ -151,4 +151,15 @@ public class Encounter implements Iterable<Character>
 		}
 		return list;
 	}
+
+	public Collection<Character> getCharacters()
+	{
+		Collection<Character> list = new LinkedList<Character>();
+		synchronized(this)
+		{
+			for (Character c : characters)
+				list.add(c);
+		}
+		return list;
+	}
 }

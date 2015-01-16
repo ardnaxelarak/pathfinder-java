@@ -1,5 +1,7 @@
 package pathfinder.gui.dialog;
 
+import pathfinder.enums.HorizontalLayout;
+import pathfinder.enums.VerticalLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.SelectionColumn;
 
@@ -7,6 +9,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.geom.Rectangle2D;
 public class MultiColoredTextColumn implements SelectionColumn
 {
 	private Color foreColor;
@@ -15,6 +18,10 @@ public class MultiColoredTextColumn implements SelectionColumn
 	private String[] texts;
 	private Color[] backColors;
 	private int xGap, yGap;
+	private int width;
+	private HorizontalLayout hl;
+	private VerticalLayout vl;
+	private boolean useMaxLayout;
 	public MultiColoredTextColumn(Font font, int xGap, int yGap, Color foreColor)
 	{
 		this.foreColor = foreColor;
@@ -22,12 +29,43 @@ public class MultiColoredTextColumn implements SelectionColumn
 		this.fm = null;
 		this.xGap = xGap;
 		this.yGap = yGap;
+		this.width = -1;
 		this.texts = new String[0];
 		this.backColors = new Color[0];
+		this.vl = VerticalLayout.CENTER;
+		this.hl = HorizontalLayout.LEFT;
+		this.useMaxLayout = true;
+	}
+
+	public void setFixedWidth(int width)
+	{
+		this.width = width;
+	}
+
+	public void setVariableWidth()
+	{
+		this.width = -1;
+	}
+
+	public void setHorizontalLayout(HorizontalLayout hl)
+	{
+		this.hl = hl;
+	}
+
+	public void setVerticalLayout(VerticalLayout vl)
+	{
+		this.vl = vl;
+	}
+
+	public void setUseMaxLayout(boolean value)
+	{
+		useMaxLayout = value;
 	}
 
 	public int getMaxWidth()
 	{
+		if (width >= 0)
+			return width;
 		int wid = 0;
 		int cur;
 		for (String s : texts)
@@ -80,17 +118,64 @@ public class MultiColoredTextColumn implements SelectionColumn
 		return backColors[index];
 	}
 
+	private void putText(Graphics g, String text, int x, int y, int width, int height)
+	{
+		Rectangle2D bounds = fm.getStringBounds(text, g);
+		double asc, des, xv, yv;
+		if (useMaxLayout)
+		{
+			asc = fm.getAscent();
+			des = fm.getDescent();
+		}
+		else
+		{
+			asc = -bounds.getY();
+			des = (bounds.getY() + bounds.getHeight());
+		}
+		switch (hl)
+		{
+		case LEFT:
+			xv = x + xGap;
+			break;
+		case RIGHT:
+			xv = x + width - bounds.getWidth() - xGap;
+			break;
+		case CENTER:
+			xv = x + width / 2 - bounds.getWidth() / 2;
+			break;
+		default:
+			xv = x + xGap;
+			break;
+		}
+		switch (vl)
+		{
+		case TOP:
+			yv = y + yGap + asc;
+			break;
+		case CENTER:
+			yv = y + (asc + height - des) / 2;
+			break;
+		case BOTTOM:
+			yv = y + height - des - yGap;
+			break;
+		default:
+			yv = y + yGap + asc;
+			break;
+		}
+		g.drawString(text, (int)xv, (int)yv);
+	}
+
 	public void draw(Graphics g, int x, int y, int width, int height, int border)
 	{
+		g.setFont(font);
 		int curY = y;
-		int yMod = (fm.getAscent() + height - fm.getDescent()) / 2;
 		int num = texts.length;
 		for (int i = 0; i < num; i++)
 		{
 			g.setColor(backColors[i]);
 			g.fillRect(x, curY, width, height);
 			g.setColor(foreColor);
-			g.drawString(texts[i], x + xGap, curY + yMod);
+			putText(g, texts[i], x, curY, width, height);
 
 			curY += height + border;
 		}

@@ -6,11 +6,11 @@ import pathfinder.gui.dialog.ColoredBorderColumn;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class CharacterColoredBorderColumn extends ColoredBorderColumn
+public class CharacterBorderColumn extends ColoredBorderColumn
 {
 	private Character[] characters;
 	private Color pcColor, npcColor;
-	public CharacterColoredBorderColumn(int width, Color pcColor, Color npcColor)
+	public CharacterBorderColumn(int width, Color pcColor, Color npcColor)
 	{
 		super(width);
 		this.pcColor = pcColor;

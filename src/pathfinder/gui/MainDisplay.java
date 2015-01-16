@@ -8,6 +8,7 @@ import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
+import pathfinder.gui.dialog.CharacterSelectionDialog;
 import pathfinder.gui.dialog.InitiativeDialog;
 
 import java.awt.BorderLayout;
@@ -36,6 +37,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	private JTextArea messages;
 	private JLabel roundCounter;
 	private InitiativeDialog id;
+	private CharacterSelectionDialog csd;
 	private MappingComparator mc;
 	public MainDisplay()
 	{
@@ -80,6 +82,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		getContentPane().add(left, BorderLayout.CENTER);
 
 		id = new InitiativeDialog(this, mc);
+		csd = new CharacterSelectionDialog(this, mc, cm);
 
 		pack();
 		setVisible(true);
@@ -153,6 +156,14 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 				sendMessage("Successfully obtained party initiatives.");
 			else
 				sendMessage("Failed to obtain party initiatives.");
+		}
+		if (c == 's')
+		{
+			Character ch = csd.showSingleSelectionDialog(characters.getCharacters());
+			if (ch == null)
+				sendMessage("No character selected.");
+			else
+				sendMessage("Selected %s.", ch.getName());
 		}
 	}
 

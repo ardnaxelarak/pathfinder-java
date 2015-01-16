@@ -8,7 +8,7 @@ import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.ArrowColumn;
 import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.FixedWidthTextColumn;
+import pathfinder.gui.dialog.TextColumn;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,14 +33,15 @@ public class InitiativeDialog extends SelectionDialog
 	private MappingComparator mc;
 	private DisplayPanel dp;
 	private ArrowColumn arrowColumn;
-	private FixedWidthTextColumn rollColumn;
+	private TextColumn rollColumn;
 	private CharacterTextColumn nameColumn;
 	public InitiativeDialog(Frame owner, MappingComparator mc)
 	{
 		super(owner);
 		this.mc = mc;
 		arrowColumn = new ArrowColumn(5, Color.black);
-		rollColumn = new FixedWidthTextColumn(Resources.FONT_12, 4, 2, 45, Color.white, Color.black);
+		rollColumn = new TextColumn(Resources.FONT_12, 4, 2, Color.white, Color.black);
+		rollColumn.setFixedWidth(35);
 		nameColumn = new CharacterTextColumn(Resources.FONT_12, new NameInitiativeModifierFormatter(), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
 		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, rollColumn, Resources.BORDER_5, nameColumn, Resources.BORDER_5);
 		getContentPane().add(dp);
@@ -55,8 +56,7 @@ public class InitiativeDialog extends SelectionDialog
 		characters = list.toArray(characters);
 		Arrays.sort(characters, mc);
 
-		rollColumn.setNum(num);
-		nameColumn.setNum(num);
+		dp.setNumRows(num);
 		for (int i = 0; i < num; i++)
 		{
 			rollColumn.setText(i, "");
@@ -67,7 +67,7 @@ public class InitiativeDialog extends SelectionDialog
 		filled = new boolean[characters.length];
 		setIndex(0);
 		finished = false;
-		dp.update(num);
+		dp.update();
 		showDialog();
 		return finished;
 	}

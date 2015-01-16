@@ -14,6 +14,7 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 	private int height = 16;
 	private int[] widths;
 	private int border = 5;
+	private int numRows;
 	private SelectionColumn[] columns;
 
 	public DisplayPanel(SelectionColumn... columns)
@@ -22,9 +23,17 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 		for (SelectionColumn sc : columns)
 			sc.setFontMetricsFetcher(this);
 		widths = new int[columns.length];
+		numRows = 0;
 	}
 
-	public void update(int numRows)
+	public void setNumRows(int numRows)
+	{
+		this.numRows = numRows;
+		for (SelectionColumn sc : columns)
+			sc.setNum(numRows);
+	}
+
+	public void update()
 	{
 		int num = columns.length;
 		int maxHeight = 0;

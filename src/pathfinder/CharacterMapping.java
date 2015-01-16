@@ -55,15 +55,15 @@ public class CharacterMapping
 		return -1;
 	}
 
-	public int getChar(Character c)
+	public char getChar(Character c)
 	{
 		int i = getIndex(c);
 		if (i < 0)
 			return ' ';
 		else if (i < 26)
-			return 'a' + i;
+			return (char)('a' + i);
 		else
-			return 'A' + i - 26;
+			return (char)('A' + i - 26);
 	}
 
 	public void removeCharacter(Character c)
