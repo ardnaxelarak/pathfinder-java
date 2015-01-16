@@ -4,6 +4,7 @@ import pathfinder.gui.dialog.MultiColoredTextColumn;
 
 import java.awt.Color;
 import java.awt.Font;
+
 public class TextColumn extends MultiColoredTextColumn
 {
 	private Color backColor;

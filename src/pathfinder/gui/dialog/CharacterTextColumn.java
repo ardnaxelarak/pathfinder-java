@@ -7,6 +7,7 @@ import pathfinder.gui.dialog.MultiColoredTextColumn;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+
 public class CharacterTextColumn extends MultiColoredTextColumn
 {
 	private Color npcColor, pcColor;

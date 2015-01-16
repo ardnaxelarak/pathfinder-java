@@ -5,26 +5,7 @@
 
 <module name="Checker">
 	<module name="TreeWalker">
-		<module name="AvoidStarImport"/>
-		<module name="AvoidStaticImport">
-			<property name="severity" value="warning"/>
-		</module>
-		<module name="UnusedImports"/>
-		<module name="ImportOrder">
-			<property name="groups" value="pathfinder,java"/>
-			<property name="separated" value="true"/>
-		</module>
-		<module name="LeftCurly">
-			<property name="option" value="nl"/>
-		</module>
-		<module name="AvoidNestedBlocks"/>
-		<module name="NeedBraces">
-			<property name="severity" value="ignore"/>
-		</module>
-		<module name="HideUtilityClassConstructor"/>
 		<module name="OneTopLevelClass"/>
-		<module name="SimplifyBooleanExpression"/>
-		<module name="SimplifyBooleanReturn"/>
 		<module name="StringLiteralEquality"/>
 		<module name="SuperFinalize"/>
 		<module name="IllegalCatch"/>
@@ -33,13 +14,42 @@
 		<module name="FallThrough"/>
 		<module name="OverloadMethodsDeclarationOrder"/>
 		<module name="OuterTypeFilename"/>
-		<module name="MultipleStringLiterals">
-			<property name="severity" value="warning"/>
+	</module>
+	<module name="TreeWalker">
+		<property name="severity" value="warning"/>
+		<module name="AvoidStaticImport"/>
+		<module name="AvoidNestedBlocks"/>
+		<module name="ArrayTypeStyle"/>
+		<module name="AvoidEscapedUnicodeCharacters"/>
+		<module name="SimplifyBooleanExpression"/>
+		<module name="SimplifyBooleanReturn"/>
+		<module name="HideUtilityClassConstructor"/>
+		<module name="AvoidStarImport"/>
+		<module name="GenericWhitespace"/>
+		<module name="NoWhitespaceAfter"/>
+		<module name="NoWhitespaceBefore"/>
+		<module name="ParenPad"/>
+		<module name="SeparatorWrap"/>
+		<module name="CyclomaticComplexity"/>
+		<module name="NPathComplexity"/>
+		<module name="TodoComment"/>
+		<module name="UnusedImports"/>
+		<module name="EmptyLineSeparator">
+			<property name="tokens" value="PACKAGE_DEF, IMPORT, CLASS_DEF, ENUM_DEF, INTERFACE_DEF, CTOR_DEF, METHOD_DEF, STATIC_INIT, INSTANCE_INIT"/>
+			<property name="allowNoEmptyLineBetweenFields" value="true"/>
+		</module>
+		<module name="ImportOrder">
+			<property name="groups" value="pathfinder,java"/>
+			<property name="separated" value="true"/>
+		</module>
+		<module name="LeftCurly">
+			<property name="option" value="nl"/>
 		</module>
 	</module>
 	<module name="TreeWalker">
-		<module name="FinalLocalVariable">
-			<property name="severity" value="ignore"/>
-		</module>
+		<property name="severity" value="ignore"/>
+		<module name="FinalLocalVariable"/>
+		<module name="MultipleStringLiterals"/>
+		<module name="NeedBraces"/>
 	</module>
 </module>

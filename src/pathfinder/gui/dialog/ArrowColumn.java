@@ -6,11 +6,13 @@ import pathfinder.gui.dialog.SelectionColumn;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+
 public class ArrowColumn implements SelectionColumn
 {
 	private int size, index, num;
 	private Color color;
 	private Polygon arrow;
+
 	public ArrowColumn(int size, Color color)
 	{
 		this.size = size;

@@ -4,6 +4,7 @@
 	<property name="build.classes.path" value="${build.path}/classes"/>
 	<property name="build.src.path" value="${build.path}/src"/>
 	<property name="parsing.path" value="parsing"/>
+	<property name="parsing.build.path" value="${build.src.path}/pathfinder/parsing"/>
 	<property name="lib.path" value="lib"/>
 	<property name="img.path" value="images"/>
 
@@ -35,16 +36,17 @@
 		<tstamp/>
 		<mkdir dir="${build.path}"/>
 		<mkdir dir="${build.classes.path}"/>
+		<available file="${build.src.path}" type="dir" property="build.src.path.present"/>
 		<mkdir dir="${build.src.path}"/>
 	</target>
 
 	<target name="generate.check">
-		<property name="build.src.path.absolute" location="${build.src.path}"/>
+		<property name="parsing.build.path.absolute" location="${parsing.build.path}"/>
 		<uptodate property="generate.notRequired">
 			<srcfiles dir="${parsing.path}" includes="*.g4"/>
 			<chainedmapper>
 				<flattenmapper/>
-				<globmapper from="*" to="${build.src.path.absolute}/*"/>
+				<globmapper from="*" to="${parsing.build.path.absolute}/*"/>
 				<mapper>
 					<globmapper from="*.g4" to="*BaseListener.java"/>
 					<globmapper from="*.g4" to="*Lexer.java"/>
@@ -60,17 +62,23 @@
 	<target name="generate" depends="init,generate.check" unless="generate.notRequired">
 		<fileset dir="${parsing.path}" includes="*.g4" id="g4.files"/>
 		<resourcecount property="g4.files.count" refid="g4.files"/>
-		<echo>Generating ${g4.files.count} source files to ${build.src.path.absolute}</echo>
+		<echo>Generating ${g4.files.count} source files to ${parsing.build.path.absolute}</echo>
 		<pathconvert property="parsing.files" refid="g4.files" pathsep=" "/>
 
 		<java jar="${antlr.jar}" fork="true">
 			<arg line="${parsing.files}"/>
 			<arg value="-o"/>
-			<arg path="${build.src.path}"/>
+			<arg path="${parsing.build.path}"/>
 		</java>
 	</target>
 
-	<target name="compile" depends="generate">
+	<target name="check">
+		<checkstyle config="checks.xml">
+			<fileset dir="${src.path}" includes="**/*.java"/>
+		</checkstyle>
+	</target>
+
+	<target name="compile" depends="generate, check">
 		<javac includeantruntime="false" debug="true" destdir="${build.classes.path}">
 			<compilerarg value="-Xlint:unchecked"/>
 			<src path="${src.path}"/>
@@ -112,11 +120,5 @@
 			</binlib>
 			<fileset dir="${img.path}" includes="*.png"/>
 		</one-jar>
-	</target>
-
-	<target name="check">
-		<checkstyle config="checks.xml">
-			<fileset dir="${src.path}" includes="**/*.java"/>
-		</checkstyle>
 	</target>
 </project>

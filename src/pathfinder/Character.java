@@ -17,6 +17,7 @@ public class Character
 	private Status status;
 	private String name;
 	private LinkedList<CharacterListener> listeners;
+
 	public Character(CharacterTemplate template)
 	{
 		this(template, template.getName());
