@@ -2,8 +2,6 @@ package pathfinder;
 
 import pathfinder.Character;
 
-import java.util.LinkedList;
-
 public class CharacterMapping
 {
 	private Character[] list;

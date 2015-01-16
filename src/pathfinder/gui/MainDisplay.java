@@ -2,8 +2,8 @@ package pathfinder.gui;
 
 import pathfinder.Character;
 import pathfinder.CharacterMapping;
-import pathfinder.Group;
 import pathfinder.Encounter;
+import pathfinder.Group;
 import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
@@ -15,12 +15,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import java.util.Collection;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

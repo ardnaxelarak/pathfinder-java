@@ -4,12 +4,6 @@ import pathfinder.Group;
 import pathfinder.MySQLConnection;
 import pathfinder.parsing.DiceRollLexer;
 import pathfinder.parsing.DiceRollParser;
-import pathfinder.parsing.DiceRollParser.RollContext;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,10 +11,17 @@ import java.awt.RenderingHints;
 import java.sql.SQLException;
 import java.util.Random;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 public class Functions
 {
 	private static MySQLConnection conn = null;
 	private static Random rand;
+	private Functions()
+	{
+	}
+
 	public static void init(String url, String user, String password) throws SQLException
 	{
 		rand = new Random();

@@ -1,8 +1,8 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Functions;
-import pathfinder.gui.dialog.SelectionColumn;
 import pathfinder.gui.dialog.FontMetricsFetcher;
+import pathfinder.gui.dialog.SelectionColumn;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

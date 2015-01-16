@@ -1,7 +1,6 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.Functions;
 import pathfinder.chars.NameInitiativeModifierFormatter;
 import pathfinder.comps.MappingComparator;
 import pathfinder.gui.Resources;
@@ -11,17 +10,10 @@ import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.TextColumn;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.swing.JPanel;
 
 public class InitiativeDialog extends SelectionDialog
 {

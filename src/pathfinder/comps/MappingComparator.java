@@ -1,9 +1,9 @@
 package pathfinder.comps;
 
-import java.util.Comparator;
-
 import pathfinder.Character;
 import pathfinder.CharacterMapping;
+
+import java.util.Comparator;
 
 public class MappingComparator implements Comparator<Character>
 {

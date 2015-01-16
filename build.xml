@@ -14,6 +14,8 @@
 	<property name="one-jar.dist.dir" value="/usr/local/lib/one-jar-ant"/>
 	<import file="${one-jar.dist.dir}/one-jar-ant-task.xml" optional="true"/>
 
+	<taskdef resource="checkstyletask.properties" classpath="${lib.path}/checkstyle-6.2-all.jar"/>
+
 	<path id="project.classpath">
 		<pathelement location="${src.path}"/>
 		<fileset dir="${lib.path}" includes="*.jar"/>
@@ -110,5 +112,11 @@
 			</binlib>
 			<fileset dir="${img.path}" includes="*.png"/>
 		</one-jar>
+	</target>
+
+	<target name="check">
+		<checkstyle config="checks.xml">
+			<fileset dir="${src.path}" includes="**/*.java"/>
+		</checkstyle>
 	</target>
 </project>

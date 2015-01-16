@@ -1,9 +1,8 @@
 package pathfinder;
 
-import pathfinder.CharacterTemplate;
 import pathfinder.Character;
+import pathfinder.CharacterTemplate;
 
-import static java.util.Collections.unmodifiableCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -49,7 +48,7 @@ public class Group implements Iterable<Character>
 
 	public Iterator<Character> iterator()
 	{
-		return unmodifiableCollection(characters).iterator();
+		return characters.iterator();
 	}
 
 	public void rollInitiative()

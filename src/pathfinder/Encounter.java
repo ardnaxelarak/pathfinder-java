@@ -1,17 +1,14 @@
 package pathfinder;
 
 import pathfinder.Character;
-import pathfinder.CharacterTemplate;
 import pathfinder.comps.InitiativeComparator;
 import pathfinder.event.EncounterListener;
 
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableCollection;
-import static java.util.Collections.synchronizedSortedSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -57,7 +54,7 @@ public class Encounter implements Iterable<Character>
 		{
 			characters.add(c);
 		}
-		charactersAdded(singleton(c));
+		charactersAdded(Collections.singleton(c));
 	}
 
 	public void addGroup(Group g)

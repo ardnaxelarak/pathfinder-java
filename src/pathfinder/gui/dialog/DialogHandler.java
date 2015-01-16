@@ -3,9 +3,9 @@ package pathfinder.gui.dialog;
 import pathfinder.Character;
 import pathfinder.CharacterMapping;
 import pathfinder.comps.MappingComparator;
-import pathfinder.gui.dialog.InitiativeDialog;
-import pathfinder.gui.dialog.CharacterSelectionDialog;
 import pathfinder.gui.dialog.CharacterOrderingDialog;
+import pathfinder.gui.dialog.CharacterSelectionDialog;
+import pathfinder.gui.dialog.InitiativeDialog;
 
 import java.awt.Frame;
 import java.util.Collection;

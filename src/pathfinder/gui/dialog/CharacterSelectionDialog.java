@@ -2,21 +2,18 @@ package pathfinder.gui.dialog;
 
 import pathfinder.Character;
 import pathfinder.CharacterMapping;
-import pathfinder.Functions;
 import pathfinder.chars.IndexFormatter;
 import pathfinder.chars.NameFormatter;
 import pathfinder.comps.MappingComparator;
-import pathfinder.enums.HorizontalLayout;
 import pathfinder.enums.VerticalLayout;
 import pathfinder.gui.Resources;
-import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.CharacterBorderColumn;
+import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.MultiColoredTextColumn;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;

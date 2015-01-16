@@ -4,7 +4,6 @@ import pathfinder.Character;
 import pathfinder.gui.dialog.ColoredBorderColumn;
 
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class CharacterBorderColumn extends ColoredBorderColumn
 {

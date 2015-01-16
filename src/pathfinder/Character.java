@@ -1,7 +1,5 @@
 package pathfinder;
 
-import static pathfinder.Functions.log;
-import static pathfinder.Functions.roll;
 import pathfinder.CharacterTemplate;
 import pathfinder.enums.Status;
 import pathfinder.event.CharacterListener;
@@ -27,7 +25,7 @@ public class Character
 	public Character(CharacterTemplate template, String name)
 	{
 		this.template = template;
-		maxHP = roll(template.getHP());
+		maxHP = Functions.roll(template.getHP());
 		damage = 0;
 		regenBlocked = false;
 		status = Status.NORMAL;
@@ -74,7 +72,7 @@ public class Character
 
 	public void rollInitiative()
 	{
-		setInitiativeRoll(roll() + template.getInitiativeModifier());
+		setInitiativeRoll(Functions.roll() + template.getInitiativeModifier());
 	}
 
 	public void addCondition(Condition cond)
@@ -106,7 +104,7 @@ public class Character
 	{
 		if (status != Status.DYING)
 			return false;
-		int value = roll();
+		int value = Functions.roll();
 		if (value == 20)
 		{
 			stabalize();
@@ -136,37 +134,37 @@ public class Character
 			amount -= template.getDR();
 			if (amount < 0)
 				amount = 0;
-			log("DR reduces damage to %d.", amount);
+			Functions.log("DR reduces damage to %d.", amount);
 			if (amount == 0)
 				return;
 		}
 		if (template.getRegeneration() > 0 && suppressRegen && !regenBlocked)
 		{
 			regenBlocked = true;
-			log("Regeneration is suppressed for %s", name);
+			Functions.log("Regeneration is suppressed for %s", name);
 		}
 		if (getCurrentHP() - amount <= -template.getCON() && (template.getRegeneration() <= 0 || regenBlocked))
 		{
 			kill();
-			log("%s is dead", name);
+			Functions.log("%s is dead", name);
 		}
 		else if (getCurrentHP() >= 0 && getCurrentHP() < amount)
 		{
 			if (template.hasFerocity())
 			{
 				// addCondition(staggered);
-				log("%s is at negative hitpoints and staggered", name);
+				Functions.log("%s is at negative hitpoints and staggered", name);
 			}
 			else
 			{
 				startDying();
-				log("%s is dying", name);
+				Functions.log("%s is dying", name);
 			}
 		}
 		else if (getCurrentHP() == amount)
 		{
 			disable();
-			log("%s is disabled", name);
+			Functions.log("%s is disabled", name);
 		}
 		damage += amount;
 	}
@@ -178,12 +176,12 @@ public class Character
 		if (amount <= 0)
 			return;
 		damage -= amount;
-		log("%s heals %d", name, amount);
+		Functions.log("%s heals %d", name, amount);
 	}
 
 	public void heal(String amount)
 	{
-		int num = roll(amount);
+		int num = Functions.roll(amount);
 		heal(num);
 	}
 
@@ -196,7 +194,7 @@ public class Character
 		if (regenBlocked)
 		{
 			regenBlocked = false;
-			log("%s resumes regeneration", name);
+			Functions.log("%s resumes regeneration", name);
 		}
 		else if (template.getRegeneration() > 0)
 		{

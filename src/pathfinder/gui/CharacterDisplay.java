@@ -1,34 +1,29 @@
 package pathfinder.gui;
 
 import pathfinder.Character;
-import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
 import pathfinder.Functions;
-import pathfinder.event.EncounterListener;
 import pathfinder.event.CharacterListener;
+import pathfinder.event.EncounterListener;
 import pathfinder.gui.Resources;
 
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.RenderingHints;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+
+import javax.swing.JPanel;
 
 public class CharacterDisplay extends JPanel implements EncounterListener, CharacterListener
 {
-	private Encounter list;
 	private static final int WIDTH = 200;
 	private static final int HEIGHT = 50;
 	private static final int BORDER = 5;
 	private static final int LEFT_BORDER = 15;
+	private Encounter list;
 	private Character current;
 	private Polygon arrow;
 	public CharacterDisplay(Encounter list)

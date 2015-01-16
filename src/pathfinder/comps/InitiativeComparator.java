@@ -1,8 +1,8 @@
 package pathfinder.comps;
 
-import java.util.Comparator;
-
 import pathfinder.Character;
+
+import java.util.Comparator;
 
 public class InitiativeComparator implements Comparator<Character>
 {
