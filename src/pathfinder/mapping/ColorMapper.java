@@ -1,15 +1,15 @@
-package pathfinder.format;
+package pathfinder.mapping;
 
 import pathfinder.Character;
-import pathfinder.format.Formatter;
+import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
 
-public class ColorFormatter implements Formatter<Character, Color>
+public class ColorMapper implements Mapper<Character, Color>
 {
 	private Color pcColor, npcColor;
 
-	public ColorFormatter(Color pcColor, Color npcColor)
+	public ColorMapper(Color pcColor, Color npcColor)
 	{
 		this.pcColor = pcColor;
 		this.npcColor = npcColor;

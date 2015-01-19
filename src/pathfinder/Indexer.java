@@ -2,10 +2,10 @@ package pathfinder;
 
 import java.util.ArrayList;
 
-public class Mapping<T>
+public class Indexer<T>
 {
 	private ArrayList<T> list;
-	public Mapping()
+	public Indexer()
 	{
 		list = new ArrayList<T>(52);
 		for (int i = 0; i < 52; i++)

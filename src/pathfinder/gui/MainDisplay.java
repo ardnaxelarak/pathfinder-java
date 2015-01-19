@@ -3,8 +3,8 @@ package pathfinder.gui;
 import pathfinder.Character;
 import pathfinder.Encounter;
 import pathfinder.Group;
-import pathfinder.Mapping;
-import pathfinder.comps.MappingComparator;
+import pathfinder.Indexer;
+import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
@@ -29,14 +29,14 @@ import javax.swing.JTextArea;
 public class MainDisplay extends JFrame implements KeyListener, EncounterListener
 {
 	private CharacterDisplay chdisp;
-	private Mapping<Character> mapping;
+	private Indexer<Character> indexer;
 	private Encounter characters;
 	private InputStatus instat = InputStatus.DISABLED;
 	private Character current;
 	private JTextArea messages;
 	private JLabel roundCounter;
 	private DialogHandler dh;
-	private MappingComparator<Character> mc;
+	private IndexingComparator<Character> mc;
 	public MainDisplay()
 	{
 		super("Pathfinder");
@@ -47,8 +47,8 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		characters = new Encounter();
 		characters.addListener(this);
-		mapping = new Mapping<Character>();
-		mc = new MappingComparator<Character>(mapping);
+		indexer = new Indexer<Character>();
+		mc = new IndexingComparator<Character>(indexer);
 
 		chdisp = new CharacterDisplay(characters);
 		JScrollPane chPane = new JScrollPane(chdisp,
@@ -79,7 +79,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
 
-		dh = new DialogHandler(this, mc, mapping);
+		dh = new DialogHandler(this, mc, indexer);
 
 		pack();
 		setVisible(true);
@@ -101,14 +101,14 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	public void charactersAdded(Collection<Character> list)
 	{
 		for (Character c : list)
-			mapping.add(c);
+			indexer.add(c);
 	}
 
 	@Override
 	public void charactersRemoved(Collection<Character> list)
 	{
 		for (Character c : list)
-			mapping.remove(c);
+			indexer.remove(c);
 	}
 
 	@Override

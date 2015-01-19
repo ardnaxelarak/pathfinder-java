@@ -1,10 +1,10 @@
-package pathfinder.format;
+package pathfinder.mapping;
 
 import pathfinder.Character;
 import pathfinder.Functions;
-import pathfinder.format.Formatter;
+import pathfinder.mapping.Mapper;
 
-public class NameInitiativeModifierFormatter implements Formatter<Character, String>
+public class NameInitiativeModifierMapper implements Mapper<Character, String>
 {
 	public String getValue(Character c)
 	{

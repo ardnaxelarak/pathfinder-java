@@ -1,16 +1,16 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.Mapping;
-import pathfinder.comps.MappingComparator;
+import pathfinder.Indexer;
+import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.VerticalLayout;
-import pathfinder.format.MappingFormatter;
-import pathfinder.format.NameFormatter;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.CharacterBorderColumn;
 import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.MappedTextColumn;
 import pathfinder.gui.dialog.MultiColoredTextColumn;
+import pathfinder.mapping.IndexingMapper;
+import pathfinder.mapping.NameMapper;
 
 import java.awt.Color;
 import java.awt.Frame;
@@ -25,20 +25,20 @@ public class CharacterSelectionDialog extends SelectionDialog
 	private boolean multiple;
 	private char[] charIndex;
 	private boolean finished;
-	private MappingComparator<Character> mc;
-	private Mapping<Character> mapping;
+	private IndexingComparator<Character> mc;
+	private Indexer<Character> indexer;
 	private DisplayPanel dp;
 	private MappedTextColumn<Character> nameColumn, idColumn;
 	private MultiColoredTextColumn selectedColumn;
 	private CharacterBorderColumn borderColumn;
-	public CharacterSelectionDialog(Frame owner, MappingComparator<Character> mc, Mapping<Character> mapping)
+	public CharacterSelectionDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
 	{
 		super(owner);
 		this.mc = mc;
-		this.mapping = mapping;
-		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameFormatter(), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
+		this.indexer = indexer;
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameMapper(), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
 
-		idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new MappingFormatter<Character>(mapping), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
+		idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new IndexingMapper<Character>(indexer), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
 		// idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
 		idColumn.setVerticalLayout(VerticalLayout.BOTTOM);
 
@@ -113,7 +113,7 @@ public class CharacterSelectionDialog extends SelectionDialog
 			idColumn.setObject(i, c);
 			borderColumn.setCharacter(i, c);
 			nameColumn.setObject(i, c);
-			charIndex[i] = mapping.getChar(c);
+			charIndex[i] = indexer.getChar(c);
 		}
 
 		selected = new boolean[characters.length];

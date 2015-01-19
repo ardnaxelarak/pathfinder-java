@@ -1,7 +1,7 @@
 package pathfinder.gui.dialog;
 
-import pathfinder.format.Formatter;
 import pathfinder.gui.dialog.MultiColoredTextColumn;
+import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -12,14 +12,14 @@ public class MappedTextColumn<T> extends MultiColoredTextColumn
 {
 	private Color npcColor, pcColor;
 	private ArrayList<T> list;
-	private Formatter<T, String> textFormat;
-	private Formatter<T, Color> colorFormat;
+	private Mapper<T, String> textMapper;
+	private Mapper<T, Color> colorMapper;
 	private boolean updateOnPaint;
-	public MappedTextColumn(Font font, Formatter<T, String> textFormat, int xGap, int yGap, Formatter<T, Color> colorFormat, Color foreColor)
+	public MappedTextColumn(Font font, Mapper<T, String> textMapper, int xGap, int yGap, Mapper<T, Color> colorMapper, Color foreColor)
 	{
 		super(font, xGap, yGap, foreColor);
-		this.textFormat = textFormat;
-		this.colorFormat = colorFormat;
+		this.textMapper = textMapper;
+		this.colorMapper = colorMapper;
 		this.list = new ArrayList<T>();
 		updateOnPaint = false;
 	}
@@ -57,8 +57,8 @@ public class MappedTextColumn<T> extends MultiColoredTextColumn
 	private void updateObject(int index)
 	{
 		T t = list.get(index);
-		super.setText(index, textFormat.getValue(t));
-		super.setBackColor(index, colorFormat.getValue(t));
+		super.setText(index, textMapper.getValue(t));
+		super.setBackColor(index, colorMapper.getValue(t));
 	}
 
 	public void updateObjects()
