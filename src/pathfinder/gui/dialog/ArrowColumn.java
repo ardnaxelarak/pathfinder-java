@@ -61,10 +61,13 @@ public class ArrowColumn implements SelectionColumn
 
 	public void draw(Graphics g, int x, int y, int width, int height, int border)
 	{
-		g.setColor(color);
-		int yd = y + index * (height + border) + height / 2;
-		arrow.translate(x, yd);
-		g.fillPolygon(arrow);
-		arrow.translate(-x, -yd);
+		if (index >= 0 && index < num)
+		{
+			g.setColor(color);
+			int yd = y + index * (height + border) + height / 2;
+			arrow.translate(x, yd);
+			g.fillPolygon(arrow);
+			arrow.translate(-x, -yd);
+		}
 	}
 }

@@ -15,7 +15,7 @@ import java.util.TreeSet;
 public class Encounter implements Iterable<Character>
 {
 	private NavigableSet<Character> characters;
-	private Character current = null;
+	private Character current;
 	private List<EncounterListener> listeners;
 	private int round;
 	public Encounter()

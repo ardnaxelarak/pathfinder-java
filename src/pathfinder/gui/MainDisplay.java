@@ -168,6 +168,10 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 			Collections.sort(party, mc);
 			dh.showOrderingDialog(party);
 		}
+		if (c == 'N')
+		{
+			dh.showRenameDialog(characters.getCharacters());
+		}
 	}
 
 	@Override

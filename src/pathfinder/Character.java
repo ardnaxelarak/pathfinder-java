@@ -213,6 +213,14 @@ public class Character
 		return name;
 	}
 
+	public void setName(String name)
+	{
+		this.name = name;
+		for (CharacterListener cl : listeners)
+			cl.nameChanged(this);
+	}
+
+
 	public String getTemplateName()
 	{
 		return template.getName();

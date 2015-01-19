@@ -75,6 +75,12 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		repaint();
 	}
 
+	@Override
+	public void nameChanged(Character c)
+	{
+		repaint();
+	}
+
 	private void updateSize()
 	{
 		setPreferredSize(new Dimension(LEFT_BORDER + WIDTH + BORDER, BORDER + (BORDER + HEIGHT) * list.size()));

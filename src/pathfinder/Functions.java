@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 public class Functions
 {
-	private static MySQLConnection conn = null;
+	private static MySQLConnection conn;
 	private static Random rand;
 	private Functions()
 	{

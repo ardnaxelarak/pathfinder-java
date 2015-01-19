@@ -21,6 +21,8 @@
 		<module name="AvoidNestedBlocks"/>
 		<module name="ArrayTypeStyle"/>
 		<module name="AvoidEscapedUnicodeCharacters"/>
+		<module name="ExplicitInitialization"/>
+		<module name="ParameterAssignment"/>
 		<module name="SimplifyBooleanExpression"/>
 		<module name="SimplifyBooleanReturn"/>
 		<module name="HideUtilityClassConstructor"/>
@@ -30,7 +32,6 @@
 		<module name="NoWhitespaceBefore"/>
 		<module name="ParenPad"/>
 		<module name="SeparatorWrap"/>
-		<module name="CyclomaticComplexity"/>
 		<module name="NPathComplexity"/>
 		<module name="TodoComment"/>
 		<module name="UnusedImports"/>
@@ -51,5 +52,6 @@
 		<module name="FinalLocalVariable"/>
 		<module name="MultipleStringLiterals"/>
 		<module name="NeedBraces"/>
+		<module name="CyclomaticComplexity"/>
 	</module>
 </module>
