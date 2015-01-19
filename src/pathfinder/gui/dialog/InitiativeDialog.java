@@ -1,12 +1,12 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.chars.NameInitiativeModifierFormatter;
 import pathfinder.comps.MappingComparator;
+import pathfinder.format.NameInitiativeModifierFormatter;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.ArrowColumn;
-import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.DisplayPanel;
+import pathfinder.gui.dialog.MappedTextColumn;
 import pathfinder.gui.dialog.TextColumn;
 
 import java.awt.Color;
@@ -22,19 +22,19 @@ public class InitiativeDialog extends SelectionDialog
 	private boolean[] filled;
 	private int index;
 	private boolean finished;
-	private MappingComparator mc;
+	private MappingComparator<Character> mc;
 	private DisplayPanel dp;
 	private ArrowColumn arrowColumn;
 	private TextColumn rollColumn;
-	private CharacterTextColumn nameColumn;
-	public InitiativeDialog(Frame owner, MappingComparator mc)
+	private MappedTextColumn<Character> nameColumn;
+	public InitiativeDialog(Frame owner, MappingComparator<Character> mc)
 	{
 		super(owner);
 		this.mc = mc;
 		arrowColumn = new ArrowColumn(5, Color.black);
 		rollColumn = new TextColumn(Resources.FONT_12, 4, 2, Color.white, Color.black);
 		rollColumn.setFixedWidth(35);
-		nameColumn = new CharacterTextColumn(Resources.FONT_12, new NameInitiativeModifierFormatter(), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameInitiativeModifierFormatter(), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, rollColumn, Resources.BORDER_5, nameColumn, Resources.BORDER_5);
 		getContentPane().add(dp);
 	}
@@ -52,7 +52,7 @@ public class InitiativeDialog extends SelectionDialog
 		for (int i = 0; i < num; i++)
 		{
 			rollColumn.setText(i, "");
-			nameColumn.setCharacter(i, characters[i]);
+			nameColumn.setObject(i, characters[i]);
 		}
 
 		rolls = new int[characters.length];

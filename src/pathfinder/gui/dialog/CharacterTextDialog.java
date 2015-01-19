@@ -1,18 +1,18 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.CharacterMapping;
-import pathfinder.chars.ConstantFormatter;
-import pathfinder.chars.IndexFormatter;
-import pathfinder.chars.NameFormatter;
+import pathfinder.Mapping;
 import pathfinder.comps.MappingComparator;
 import pathfinder.enums.DialogType;
 import pathfinder.enums.VerticalLayout;
+import pathfinder.format.ConstantFormatter;
+import pathfinder.format.MappingFormatter;
+import pathfinder.format.NameFormatter;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.ArrowColumn;
 import pathfinder.gui.dialog.CharacterBorderColumn;
-import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.DisplayPanel;
+import pathfinder.gui.dialog.MappedTextColumn;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,28 +33,28 @@ public class CharacterTextDialog extends SelectionDialog
 	private boolean finished;
 	private boolean selected;
 	private String textValue;
-	private MappingComparator mc;
-	private CharacterMapping cm;
+	private MappingComparator<Character> mc;
+	private Mapping<Character> mapping;
 	private DisplayPanel dp;
 	private JLabel textLabel, valueLabel;
 	private DialogType type;
 	private ArrowColumn arrowColumn;
-	private CharacterTextColumn nameColumn, idColumn, dashColumn;
+	private MappedTextColumn<Character> nameColumn, idColumn, dashColumn;
 	private CharacterBorderColumn borderColumn;
-	public CharacterTextDialog(Frame owner, MappingComparator mc, CharacterMapping cm)
+	public CharacterTextDialog(Frame owner, MappingComparator<Character> mc, Mapping<Character> mapping)
 	{
 		super(owner);
 		this.mc = mc;
-		this.cm = cm;
-		nameColumn = new CharacterTextColumn(Resources.FONT_12, new NameFormatter(), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		this.mapping = mapping;
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameFormatter(), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 
 		arrowColumn = new ArrowColumn(5, Color.black);
 
-		idColumn = new CharacterTextColumn(Resources.FONT_MONO_12, new IndexFormatter(cm), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new MappingFormatter<Character>(mapping), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 		// idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
 		idColumn.setVerticalLayout(VerticalLayout.BOTTOM);
 
-		dashColumn = new CharacterTextColumn(Resources.FONT_MONO_12, new ConstantFormatter("-"), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		dashColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new ConstantFormatter<Character, String>("-"), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 		dashColumn.setVerticalLayout(VerticalLayout.BOTTOM);
 
 		borderColumn = new CharacterBorderColumn(4, Resources.PC_COLOR, Resources.NPC_COLOR);
@@ -101,7 +101,7 @@ public class CharacterTextDialog extends SelectionDialog
 		for (int i = 0; i < num; i++)
 		{
 			setCharacter(i, characters[i]);
-			charIndex[i] = cm.getChar(characters[i]);
+			charIndex[i] = mapping.getChar(characters[i]);
 		}
 
 		setIndex(-1);
@@ -128,10 +128,10 @@ public class CharacterTextDialog extends SelectionDialog
 
 	private void setCharacter(int index, Character c)
 	{
-		dashColumn.setCharacter(index, c);
-		idColumn.setCharacter(index, c);
+		dashColumn.setObject(index, c);
+		idColumn.setObject(index, c);
 		borderColumn.setCharacter(index, c);
-		nameColumn.setCharacter(index, c);
+		nameColumn.setObject(index, c);
 	}
 
 	private void finish()

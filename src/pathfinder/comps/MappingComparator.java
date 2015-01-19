@@ -1,22 +1,21 @@
 package pathfinder.comps;
 
-import pathfinder.Character;
-import pathfinder.CharacterMapping;
+import pathfinder.Mapping;
 
 import java.util.Comparator;
 
-public class MappingComparator implements Comparator<Character>
+public class MappingComparator<T> implements Comparator<T>
 {
-	private CharacterMapping mapping;
-	public MappingComparator(CharacterMapping mapping)
+	private Mapping<T> mapping;
+	public MappingComparator(Mapping<T> mapping)
 	{
 		this.mapping = mapping;
 	}
 
 	@Override
-	public int compare(Character c1, Character c2)
+	public int compare(T t1, T t2)
 	{
-		int i1 = mapping.getIndex(c1), i2 = mapping.getIndex(c2);
+		int i1 = mapping.getIndex(t1), i2 = mapping.getIndex(t2);
 		if (i1 == i2)
 			return 0;
 		else if (i1 < 0)

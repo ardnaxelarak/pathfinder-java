@@ -1,5 +1,6 @@
 package pathfinder.gui;
 
+import pathfinder.format.ColorFormatter;
 import pathfinder.gui.dialog.BorderColumn;
 
 import java.awt.Color;
@@ -14,6 +15,7 @@ public class Resources
 	public static final Color DIALOG_BACK = new Color(173, 156, 156);
 	public static final Color ARROW_COLOR = Color.darkGray;
 	public static final BorderColumn BORDER_5 = new BorderColumn(5);
+	public static final ColorFormatter BACK_COLOR_FORMAT = new ColorFormatter(PC_COLOR, NPC_COLOR);
 
 	private Resources()
 	{

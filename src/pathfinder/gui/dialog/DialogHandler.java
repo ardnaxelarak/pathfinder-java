@@ -1,7 +1,7 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.CharacterMapping;
+import pathfinder.Mapping;
 import pathfinder.comps.MappingComparator;
 import pathfinder.gui.dialog.CharacterOrderingDialog;
 import pathfinder.gui.dialog.CharacterSelectionDialog;
@@ -19,12 +19,12 @@ public class DialogHandler
 	private CharacterOrderingDialog orderDialog;
 	private CharacterTextDialog textDialog;
 
-	public DialogHandler(Frame parent, MappingComparator mc, CharacterMapping cm)
+	public DialogHandler(Frame parent, MappingComparator<Character> mc, Mapping<Character> mapping)
 	{
 		initDialog = new InitiativeDialog(parent, mc);
-		selectDialog = new CharacterSelectionDialog(parent, mc, cm);
-		orderDialog = new CharacterOrderingDialog(parent, mc, cm);
-		textDialog = new CharacterTextDialog(parent, mc, cm);
+		selectDialog = new CharacterSelectionDialog(parent, mc, mapping);
+		orderDialog = new CharacterOrderingDialog(parent, mc, mapping);
+		textDialog = new CharacterTextDialog(parent, mc, mapping);
 	}
 
 	public boolean showInitiativeDialog(Collection<Character> list)

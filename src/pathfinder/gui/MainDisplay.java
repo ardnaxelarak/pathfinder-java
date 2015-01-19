@@ -1,9 +1,9 @@
 package pathfinder.gui;
 
 import pathfinder.Character;
-import pathfinder.CharacterMapping;
 import pathfinder.Encounter;
 import pathfinder.Group;
+import pathfinder.Mapping;
 import pathfinder.comps.MappingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
@@ -29,14 +29,14 @@ import javax.swing.JTextArea;
 public class MainDisplay extends JFrame implements KeyListener, EncounterListener
 {
 	private CharacterDisplay chdisp;
-	private CharacterMapping cm;
+	private Mapping<Character> mapping;
 	private Encounter characters;
 	private InputStatus instat = InputStatus.DISABLED;
 	private Character current;
 	private JTextArea messages;
 	private JLabel roundCounter;
 	private DialogHandler dh;
-	private MappingComparator mc;
+	private MappingComparator<Character> mc;
 	public MainDisplay()
 	{
 		super("Pathfinder");
@@ -47,8 +47,8 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		characters = new Encounter();
 		characters.addListener(this);
-		cm = new CharacterMapping();
-		mc = new MappingComparator(cm);
+		mapping = new Mapping<Character>();
+		mc = new MappingComparator<Character>(mapping);
 
 		chdisp = new CharacterDisplay(characters);
 		JScrollPane chPane = new JScrollPane(chdisp,
@@ -79,7 +79,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		left.add(messages, BorderLayout.PAGE_START);
 		getContentPane().add(left, BorderLayout.CENTER);
 
-		dh = new DialogHandler(this, mc, cm);
+		dh = new DialogHandler(this, mc, mapping);
 
 		pack();
 		setVisible(true);
@@ -101,14 +101,14 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	public void charactersAdded(Collection<Character> list)
 	{
 		for (Character c : list)
-			cm.addCharacter(c);
+			mapping.add(c);
 	}
 
 	@Override
 	public void charactersRemoved(Collection<Character> list)
 	{
 		for (Character c : list)
-			cm.removeCharacter(c);
+			mapping.remove(c);
 	}
 
 	@Override

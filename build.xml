@@ -78,7 +78,7 @@
 		</checkstyle>
 	</target>
 
-	<target name="compile" depends="generate, check">
+	<target name="compile" depends="generate">
 		<javac includeantruntime="false" debug="true" destdir="${build.classes.path}">
 			<compilerarg value="-Xlint:unchecked"/>
 			<src path="${src.path}"/>
@@ -87,11 +87,7 @@
 		</javac>
 	</target>
 
-	<target name="clean">
-		<delete dir="${build.path}"/>
-	</target>
-
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile, check">
 		<jar basedir="${build.classes.path}" destfile="${jarname}">
 			<manifest>
 				<attribute name="Built-By" value="${builder}" />
@@ -101,6 +97,10 @@
 				<attribute name="Class-Path" value="${manifest.classpath}"/>
 			</manifest>
 		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.path}"/>
 	</target>
 
 	<target name="one-jar" depends="jar">

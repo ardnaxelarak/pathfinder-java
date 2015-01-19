@@ -1,15 +1,15 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
-import pathfinder.CharacterMapping;
-import pathfinder.chars.IndexFormatter;
-import pathfinder.chars.NameFormatter;
+import pathfinder.Mapping;
 import pathfinder.comps.MappingComparator;
 import pathfinder.enums.VerticalLayout;
+import pathfinder.format.MappingFormatter;
+import pathfinder.format.NameFormatter;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.CharacterBorderColumn;
-import pathfinder.gui.dialog.CharacterTextColumn;
 import pathfinder.gui.dialog.DisplayPanel;
+import pathfinder.gui.dialog.MappedTextColumn;
 import pathfinder.gui.dialog.MultiColoredTextColumn;
 
 import java.awt.Color;
@@ -25,20 +25,20 @@ public class CharacterSelectionDialog extends SelectionDialog
 	private boolean multiple;
 	private char[] charIndex;
 	private boolean finished;
-	private MappingComparator mc;
-	private CharacterMapping cm;
+	private MappingComparator<Character> mc;
+	private Mapping<Character> mapping;
 	private DisplayPanel dp;
-	private CharacterTextColumn nameColumn, idColumn;
+	private MappedTextColumn<Character> nameColumn, idColumn;
 	private MultiColoredTextColumn selectedColumn;
 	private CharacterBorderColumn borderColumn;
-	public CharacterSelectionDialog(Frame owner, MappingComparator mc, CharacterMapping cm)
+	public CharacterSelectionDialog(Frame owner, MappingComparator<Character> mc, Mapping<Character> mapping)
 	{
 		super(owner);
 		this.mc = mc;
-		this.cm = cm;
-		nameColumn = new CharacterTextColumn(Resources.FONT_12, new NameFormatter(), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		this.mapping = mapping;
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameFormatter(), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 
-		idColumn = new CharacterTextColumn(Resources.FONT_MONO_12, new IndexFormatter(cm), 4, 2, Resources.PC_COLOR, Resources.NPC_COLOR, Color.black);
+		idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new MappingFormatter<Character>(mapping), 4, 2, Resources.BACK_COLOR_FORMAT, Color.black);
 		// idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
 		idColumn.setVerticalLayout(VerticalLayout.BOTTOM);
 
@@ -110,10 +110,10 @@ public class CharacterSelectionDialog extends SelectionDialog
 				selectedColumn.setBackColor(i, Resources.PC_COLOR);
 			else
 				selectedColumn.setBackColor(i, Resources.NPC_COLOR);
-			idColumn.setCharacter(i, c);
+			idColumn.setObject(i, c);
 			borderColumn.setCharacter(i, c);
-			nameColumn.setCharacter(i, c);
-			charIndex[i] = cm.getChar(c);
+			nameColumn.setObject(i, c);
+			charIndex[i] = mapping.getChar(c);
 		}
 
 		selected = new boolean[characters.length];
