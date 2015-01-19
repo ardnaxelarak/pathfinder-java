@@ -147,30 +147,29 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	public void keyTyped(KeyEvent e)
 	{
 		char c = e.getKeyChar();
-		if (c == 'i')
+		switch (c)
 		{
+		case 'i':
 			if (rollInitiatives())
 				sendMessage("Successfully obtained party initiatives.");
 			else
 				sendMessage("Failed to obtain party initiatives.");
-		}
-		if (c == 's')
-		{
+			break;
+		case 's':
 			Character ch = dh.showSingleSelectionDialog(characters.getCharacters());
 			if (ch == null)
 				sendMessage("No character selected.");
 			else
 				sendMessage("Selected %s.", ch.getName());
-		}
-		if (c == 'o')
-		{
+			break;
+		case 'o':
 			List<Character> party = characters.getPCs();
 			Collections.sort(party, mc);
 			dh.showOrderingDialog(party);
-		}
-		if (c == 'N')
-		{
+			break;
+		case 'N':
 			dh.showRenameDialog(characters.getCharacters());
+			break;
 		}
 	}
 
