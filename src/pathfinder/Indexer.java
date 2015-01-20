@@ -19,7 +19,10 @@ public class Indexer<T>
 		if (list.get(i) != null)
 		{
 			for (i = 0; i < list.size() && list.get(i) != null; i++);
-			list.set(i, t);
+			if (i >= 52)
+				list.add(t);
+			else
+				list.set(i, t);
 			if (i < 26)
 				id = (char)('a' + i);
 			else if (i < 52)
@@ -71,5 +74,17 @@ public class Indexer<T>
 	{
 		int i = list.indexOf(t);
 		list.set(i, null);
+		condense();
+	}
+
+	private void condense()
+	{
+		if (list.size() <= 52)
+			return;
+		for (int i = 0; i < 52 && list.size() > 52; i++)
+		{
+			if (list.get(i) == null)
+				list.set(i, list.remove(52));
+		}
 	}
 }

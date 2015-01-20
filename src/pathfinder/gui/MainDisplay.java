@@ -19,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -231,6 +232,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		timerRunning = false;
 	}
 
+	public Encounter getEncounter()
+	{
+		return characters;
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
@@ -266,6 +272,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 			break;
 		case 'O':
 			openPages();
+			break;
+		case 'R':
+			Character[] list = dh.showMultipleSelectionDialog(characters.getCharacters());
+			if (list != null)
+				characters.removeAll(Arrays.asList(list));
 			break;
 		}
 	}

@@ -3,6 +3,7 @@ package pathfinder.gui;
 import pathfinder.Character;
 import pathfinder.Encounter;
 import pathfinder.Functions;
+import pathfinder.enums.TextLayout;
 import pathfinder.event.CharacterListener;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.Resources;
@@ -101,15 +102,17 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		g.fillRect(x, y, WIDTH, HEIGHT);
 		g.setFont(Resources.FONT_12);
 		g.setColor(Color.black);
-		FontMetrics met = g.getFontMetrics();
-		g.drawString(c.getName(), x + 5, y + met.getAscent() + 3);
+		FontMetrics fm = g.getFontMetrics();
+		Functions.drawAlignedString(g, fm, c.getName(), x + 5, y + 3, TextLayout.TOP_LEFT);
 		if (c.getInitiativeRoll() > Integer.MIN_VALUE)
 		{
 			String init = String.format("%d (%s)", c.getInitiativeRoll(), Functions.modifierString(c.getInitiativeModifier()));
-			g.drawString(init, x + WIDTH - 5 - met.stringWidth(init), y + met.getAscent() + 3);
+			Functions.drawAlignedString(g, fm, init, x + WIDTH - 5, y + 3, TextLayout.TOP_RIGHT);
 		}
 		String hp = String.format("[%d / %d]", c.getCurrentHP(), c.getMaxHP());
-		g.drawString(hp, x + WIDTH - 5 - met.stringWidth(hp), y + HEIGHT - met.getDescent() - 3);
+		Functions.drawAlignedString(g, fm, hp, x + WIDTH - 5, y + HEIGHT - 3, TextLayout.BOTTOM_RIGHT);
+		String ac = String.format("AC: %d", c.getTemplate().getAC());
+		Functions.drawAlignedString(g, fm, ac, x + 5, y + HEIGHT - 3, TextLayout.BOTTOM_LEFT);
 	}
 
 	@Override

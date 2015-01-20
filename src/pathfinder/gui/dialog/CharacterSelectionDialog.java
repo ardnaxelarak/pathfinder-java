@@ -18,6 +18,8 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.swing.JScrollPane;
+
 public class CharacterSelectionDialog extends SelectionDialog
 {
 	private Character[] characters;
@@ -31,6 +33,8 @@ public class CharacterSelectionDialog extends SelectionDialog
 	private MappedTextColumn<Character> nameColumn, idColumn;
 	private MultiColoredTextColumn selectedColumn;
 	private CharacterBorderColumn borderColumn;
+	private JScrollPane sp;
+
 	public CharacterSelectionDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
 	{
 		super(owner);
@@ -47,13 +51,16 @@ public class CharacterSelectionDialog extends SelectionDialog
 
 		borderColumn = new CharacterBorderColumn(4, Resources.PC_COLOR, Resources.NPC_COLOR);
 		dp = new DisplayPanel(Resources.BORDER_5, borderColumn, idColumn, selectedColumn, nameColumn, borderColumn, Resources.BORDER_5);
-		getContentPane().add(dp);
+
+		sp = new JScrollPane(dp);
+		getContentPane().add(sp);
 	}
 
 	public Character showSingleSelectionDialog(Collection<Character> list)
 	{
 		if (list.isEmpty())
 			return null;
+		multiple = false;
 		setup(list);
 		showDialog();
 		if (finished)
@@ -70,6 +77,7 @@ public class CharacterSelectionDialog extends SelectionDialog
 	{
 		if (list.isEmpty())
 			return null;
+		multiple = true;
 		setup(list);
 		showDialog();
 		if (finished)
@@ -140,11 +148,19 @@ public class CharacterSelectionDialog extends SelectionDialog
 		}
 	}
 
+	private int search(char c)
+	{
+		for (int i = 0; i < charIndex.length; i++)
+			if (charIndex[i] == c)
+				return i;
+		return -1;
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
 		char c = e.getKeyChar();
-		int ind = Arrays.binarySearch(charIndex, c);
+		int ind = search(c);
 		if (ind >= 0)
 		{
 			if (selected[ind])

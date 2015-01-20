@@ -4,5 +4,6 @@ public enum VerticalLayout
 {
 	TOP,
 	CENTER,
+	BASELINE,
 	BOTTOM;
 }

@@ -2,9 +2,13 @@ package pathfinder;
 
 import pathfinder.Group;
 import pathfinder.MySQLConnection;
+import pathfinder.enums.TextLayout;
 import pathfinder.parsing.DiceRollLexer;
 import pathfinder.parsing.DiceRollParser;
+import pathfinder.parsing.EncounterModifierLexer;
+import pathfinder.parsing.EncounterModifierParser;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -66,6 +70,14 @@ public class Functions
 		}
 	}
 
+	public static void executeModify(Encounter enc, String command)
+	{
+		EncounterModifierLexer lexer = new EncounterModifierLexer(new ANTLRInputStream(command));
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		EncounterModifierParser parser = new EncounterModifierParser(tokens);
+		parser.commands(enc);
+	}
+
 	public static int roll(String roll)
 	{
 		DiceRollLexer lexer = new DiceRollLexer(new ANTLRInputStream(roll));
@@ -113,5 +125,47 @@ public class Functions
 	public static void enableTAA(Graphics g)
 	{
 		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	}
+
+	public static void drawAlignedString(Graphics g, FontMetrics fm, String text, int x, int y, TextLayout tl)
+	{
+		int xv, yv;
+		switch (tl.getHorizontalLayout())
+		{
+		case LEFT:
+			xv = x;
+			break;
+		case RIGHT:
+			xv = x - fm.stringWidth(text);
+			break;
+		case CENTER:
+			xv = x - fm.stringWidth(text) / 2;
+			break;
+		default:
+			throw new UnsupportedOperationException("Undefined HorizontalLayout");
+		}
+		switch (tl.getVerticalLayout())
+		{
+		case TOP:
+			yv = y + fm.getAscent();
+			break;
+		case CENTER:
+			yv = y + (fm.getAscent() - fm.getDescent()) / 2;
+			break;
+		case BOTTOM:
+			yv = y - fm.getDescent();
+			break;
+		case BASELINE:
+			yv = y;
+			break;
+		default:
+			throw new UnsupportedOperationException("Undefined VerticalLayout");
+		}
+		g.drawString(text, xv, yv);
+	}
+
+	public static void drawAlignedString(Graphics g, String text, int x, int y, TextLayout tl)
+	{
+		drawAlignedString(g, g.getFontMetrics(), text, x, y, tl);
 	}
 }

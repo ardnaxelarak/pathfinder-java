@@ -30,12 +30,6 @@ public class Encounter implements Iterable<Character>
 		listeners.add(listener);
 	}
 
-	private void charactersRemoved(Collection<Character> list)
-	{
-		for (EncounterListener listener : listeners)
-			listener.charactersRemoved(list);
-	}
-
 	private void setIndex(int index)
 	{
 		this.index = index;
@@ -52,6 +46,38 @@ public class Encounter implements Iterable<Character>
 		}
 		for (EncounterListener listener : listeners)
 			listener.charactersAdded(Collections.singleton(c));
+	}
+
+	public void removeCharacter(Character c)
+	{
+		boolean contained;
+		synchronized(this)
+		{
+			contained = characters.remove(c);
+		}
+		if (contained)
+		{
+			for (EncounterListener listener : listeners)
+				listener.charactersRemoved(Collections.singleton(c));
+		}
+	}
+
+	public void removeAll(Collection<Character> list)
+	{
+		LinkedList<Character> removed = new LinkedList<Character>();
+		for (Character c : list)
+		{
+			synchronized(this)
+			{
+				if (characters.remove(c))
+					removed.add(c);
+			}
+		}
+		if (removed.size() > 0)
+		{
+			for (EncounterListener listener : listeners)
+				listener.charactersRemoved(removed);
+		}
 	}
 
 	public void addGroup(Group g)

@@ -39,8 +39,8 @@ public class Main
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine())
 		{
-			String roll = sc.nextLine();
-			System.out.println(Functions.roll(roll));
+			String mod = sc.nextLine();
+			Functions.executeModify(md.getEncounter(), mod);
 		}
 		Functions.close();
 	}
