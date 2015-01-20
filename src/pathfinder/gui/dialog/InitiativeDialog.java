@@ -1,13 +1,14 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
+import pathfinder.Functions;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.ArrowColumn;
 import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.MappedTextColumn;
 import pathfinder.gui.dialog.TextColumn;
-import pathfinder.mapping.NameInitiativeModifierMapper;
+import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
 import java.awt.Frame;
@@ -17,6 +18,14 @@ import java.util.Collection;
 
 public class InitiativeDialog extends SelectionDialog
 {
+	private static final Mapper<Character, String> nameInitiativeMapper = new Mapper<Character, String>()
+	{
+		public String getValue(Character c)
+		{
+			return String.format("%s (%s)", c.getName(), Functions.modifierString(c.getInitiativeModifier()));
+		}
+	};
+
 	private Character[] characters;
 	private int[] rolls;
 	private boolean[] filled;
@@ -27,6 +36,7 @@ public class InitiativeDialog extends SelectionDialog
 	private ArrowColumn arrowColumn;
 	private TextColumn rollColumn;
 	private MappedTextColumn<Character> nameColumn;
+
 	public InitiativeDialog(Frame owner, IndexingComparator<Character> mc)
 	{
 		super(owner);
@@ -34,7 +44,7 @@ public class InitiativeDialog extends SelectionDialog
 		arrowColumn = new ArrowColumn(5, Color.black);
 		rollColumn = new TextColumn(Resources.FONT_12, 4, 2, Color.white, Color.black);
 		rollColumn.setFixedWidth(35);
-		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameInitiativeModifierMapper(), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, nameInitiativeMapper, 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
 		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, rollColumn, Resources.BORDER_5, nameColumn, Resources.BORDER_5);
 		getContentPane().add(dp);
 	}
