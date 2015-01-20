@@ -1,19 +1,21 @@
 package pathfinder;
 
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CharacterTemplate
+public final class CharacterTemplate implements Comparable<CharacterTemplate>
 {
-	private int id, strength, dexterity, constitution, intelligence, wisdom,
+	private final int id, strength, dexterity, constitution, intelligence, wisdom,
 				charisma, initiative_modifier, speed, fly_speed, swim_speed,
 				climb_speed, burrow_speed, space, reach, ac, touch_ac,
 				flat_footed_ac, fast_healing, regeneration, fort, ref,
 				will, dr, sr;
-	private String name, base_attack_bonus, fly_maneuver, url,
+	private final String name, base_attack_bonus, fly_maneuver,
 				regeneration_bypass, dr_bypass, hp;
-	private boolean ferocity;
-	private double cr;
+	private final URI url;
+	private final boolean ferocity;
+	private final double cr;
 	public CharacterTemplate(ResultSet set) throws SQLException
 	{
 		set.next();
@@ -50,7 +52,11 @@ public class CharacterTemplate
 		dr = set.getInt("dr");
 		dr_bypass = set.getString("dr_bypass");
 		sr = set.getInt("sr");
-		url = set.getString("url");
+		String urlString = set.getString("url");
+		if (urlString != null)
+			url = URI.create(urlString);
+		else
+			url = null;
 	}
 
 	public int getID()
@@ -218,8 +224,23 @@ public class CharacterTemplate
 		return sr;
 	}
 
-	public String getURL()
+	public URI getURL()
 	{
 		return url;
+	}
+
+	@Override
+	public int compareTo(CharacterTemplate ct)
+	{
+		return this.id - ct.id;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof CharacterTemplate))
+			return false;
+		CharacterTemplate ct = (CharacterTemplate)o;
+		return ct.id == this.id;
 	}
 }

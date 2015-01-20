@@ -1,6 +1,7 @@
 package pathfinder;
 
 import pathfinder.Character;
+import pathfinder.CharacterTemplate;
 import pathfinder.comps.InitiativeComparator;
 import pathfinder.event.EncounterListener;
 
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class Encounter implements Iterable<Character>
@@ -158,5 +160,16 @@ public class Encounter implements Iterable<Character>
 				list.add(c);
 		}
 		return list;
+	}
+
+	public Set<CharacterTemplate> getTemplates()
+	{
+		Set<CharacterTemplate> templates = new TreeSet<CharacterTemplate>();
+		synchronized(this)
+		{
+			for (Character c : characters)
+				templates.add(c.getTemplate());
+		}
+		return templates;
 	}
 }

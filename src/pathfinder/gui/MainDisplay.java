@@ -1,6 +1,7 @@
 package pathfinder.gui;
 
 import pathfinder.Character;
+import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
 import pathfinder.Group;
 import pathfinder.Indexer;
@@ -12,12 +13,15 @@ import pathfinder.gui.dialog.DialogHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -143,6 +147,23 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		messages.append(String.format(format, args) + "\n");
 	}
 
+	public void openPages()
+	{
+		Desktop desktop = Desktop.getDesktop();
+		Set<CharacterTemplate> set = characters.getTemplates();
+		for (CharacterTemplate ct : set)
+		{
+			try
+			{
+				if (ct.getURL() != null)
+					desktop.browse(ct.getURL());
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
@@ -169,6 +190,9 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 			break;
 		case 'N':
 			dh.showRenameDialog(characters.getCharacters());
+			break;
+		case 'O':
+			openPages();
 			break;
 		}
 	}
