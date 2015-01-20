@@ -34,6 +34,7 @@ public class Character
 		skills = new SkillSet();
 		this.name = name;
 		this.isPC = false;
+		initiativeRoll = Integer.MIN_VALUE;
 		randomModifier = Functions.random();
 		listeners = new LinkedList<CharacterListener>();
 	}

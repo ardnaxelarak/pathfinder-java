@@ -29,13 +29,11 @@ public class Main
 		Group party = Functions.getParty(1);
 		if (party != null)
 		{
-			party.rollInitiative();
 			md.addGroup(party);
 		}
 		Group enc = Functions.getEncounter(3);
 		if (enc != null)
 		{
-			enc.rollInitiative();
 			md.addGroup(enc);
 		}
 		Scanner sc = new Scanner(System.in);

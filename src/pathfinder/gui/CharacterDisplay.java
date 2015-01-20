@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 
 public class CharacterDisplay extends JPanel implements EncounterListener, CharacterListener
 {
-	private static final int WIDTH = 200;
+	private static final int WIDTH = 230;
 	private static final int HEIGHT = 50;
 	private static final int BORDER = 5;
 	private static final int LEFT_BORDER = 15;
@@ -65,6 +65,12 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 	}
 
 	@Override
+	public void charactersReordered(Encounter e)
+	{
+		repaint();
+	}
+
+	@Override
 	public void roundUpdated()
 	{
 	}
@@ -97,8 +103,11 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		g.setColor(Color.black);
 		FontMetrics met = g.getFontMetrics();
 		g.drawString(c.getName(), x + 5, y + met.getAscent() + 3);
-		String init = String.format("%d (%s)", c.getInitiativeRoll(), Functions.modifierString(c.getInitiativeModifier()));
-		g.drawString(init, x + WIDTH - 5 - met.stringWidth(init), y + met.getAscent() + 3);
+		if (c.getInitiativeRoll() > Integer.MIN_VALUE)
+		{
+			String init = String.format("%d (%s)", c.getInitiativeRoll(), Functions.modifierString(c.getInitiativeModifier()));
+			g.drawString(init, x + WIDTH - 5 - met.stringWidth(init), y + met.getAscent() + 3);
+		}
 		String hp = String.format("[%d / %d]", c.getCurrentHP(), c.getMaxHP());
 		g.drawString(hp, x + WIDTH - 5 - met.stringWidth(hp), y + HEIGHT - met.getDescent() - 3);
 	}

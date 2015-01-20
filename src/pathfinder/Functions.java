@@ -18,6 +18,7 @@ public class Functions
 {
 	private static MySQLConnection conn;
 	private static Random rand;
+
 	private Functions()
 	{
 	}

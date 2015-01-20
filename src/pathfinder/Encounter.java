@@ -2,40 +2,32 @@ package pathfinder;
 
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
-import pathfinder.comps.InitiativeComparator;
 import pathfinder.event.EncounterListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class Encounter implements Iterable<Character>
 {
-	private NavigableSet<Character> characters;
-	private Character current;
+	private List<Character> characters;
 	private List<EncounterListener> listeners;
-	private int round;
+	private int round, index;
 	public Encounter()
 	{
 		listeners = new LinkedList<EncounterListener>();
-		InitiativeComparator ic = new InitiativeComparator();
-		characters = new TreeSet<Character>(ic);
+		characters = new ArrayList<Character>(20);
+		index = -1;
 	}
 
 	public void addListener(EncounterListener listener)
 	{
 		listeners.add(listener);
-	}
-
-	private void charactersAdded(Collection<Character> list)
-	{
-		for (EncounterListener listener : listeners)
-			listener.charactersAdded(list);
 	}
 
 	private void charactersRemoved(Collection<Character> list)
@@ -44,8 +36,10 @@ public class Encounter implements Iterable<Character>
 			listener.charactersRemoved(list);
 	}
 
-	private void selectionUpdated(Character c)
+	private void setIndex(int index)
 	{
+		this.index = index;
+		Character c = getCurrent();
 		for (EncounterListener listener : listeners)
 			listener.selectionUpdated(c);
 	}
@@ -56,7 +50,8 @@ public class Encounter implements Iterable<Character>
 		{
 			characters.add(c);
 		}
-		charactersAdded(Collections.singleton(c));
+		for (EncounterListener listener : listeners)
+			listener.charactersAdded(Collections.singleton(c));
 	}
 
 	public void addGroup(Group g)
@@ -68,7 +63,8 @@ public class Encounter implements Iterable<Character>
 		{
 			characters.addAll(list);
 		}
-		charactersAdded(list);
+		for (EncounterListener listener : listeners)
+			listener.charactersAdded(list);
 	}
 
 	private void setRound(int round)
@@ -81,42 +77,51 @@ public class Encounter implements Iterable<Character>
 	public void start()
 	{
 		round = 0;
-		current = characters.first();
-		selectionUpdated(current);
+		setIndex(0);
 	}
 
 	public Character next()
 	{
-		if (current == null)
-			current = characters.first();
+		if (index < 0)
+		{
+			if (characters.size() > 0)
+				setIndex(0);
+		}
 		else
 		{
-			current = characters.higher(current);
-			if (current == null)
+			if (index + 1 >= characters.size())
 			{
-				current = characters.first();
+				setIndex(0);
 				setRound(round + 1);
 			}
+			else
+			{
+				setIndex(index + 1);
+			}
 		}
-		selectionUpdated(current);
-		return current;
+		return getCurrent();
 	}
 
 	public Character prev()
 	{
-		if (current == null)
-			current = characters.last();
+		if (index < 0)
+		{
+			if (characters.size() > 0)
+				setIndex(characters.size() - 1);
+		}
 		else
 		{
-			current = characters.lower(current);
-			if (current == null)
+			if (index == 0)
 			{
-				current = characters.last();
+				setIndex(characters.size() - 1);
 				setRound(round - 1);
 			}
+			else
+			{
+				setIndex(index - 1);
+			}
 		}
-		selectionUpdated(current);
-		return current;
+		return getCurrent();
 	}
 
 	public int size()
@@ -129,9 +134,31 @@ public class Encounter implements Iterable<Character>
 		return round;
 	}
 
+	public void sortInitiative()
+	{
+		Collections.sort(characters, Constants.INIT_COMP);
+		for (EncounterListener listener : listeners)
+			listener.charactersReordered(this);
+	}
+
+	public void rollNPCInitiatives()
+	{
+		synchronized(this)
+		{
+			for (Character c : characters)
+			{
+				if (!(c.isPC()))
+					c.rollInitiative();
+			}
+		}
+	}
+
 	public Character getCurrent()
 	{
-		return current;
+		if (index >= 0 && index < characters.size())
+			return characters.get(index);
+		else
+			return null;
 	}
 
 	public Iterator<Character> iterator()

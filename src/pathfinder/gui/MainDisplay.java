@@ -9,6 +9,7 @@ import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
+import pathfinder.gui.TimerLabel;
 import pathfinder.gui.dialog.DialogHandler;
 
 import java.awt.BorderLayout;
@@ -22,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -41,6 +44,18 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	private JLabel roundCounter;
 	private DialogHandler dh;
 	private IndexingComparator<Character> mc;
+	private Timer timer;
+	private TimerLabel timerLabel;
+	private boolean timerRunning;
+
+	private TimerTask timerCounter = new TimerTask()
+	{
+		public void run()
+		{
+			timerLabel.increment();
+		}
+	};
+
 	public MainDisplay()
 	{
 		super("Pathfinder");
@@ -72,9 +87,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 
 		roundCounter = new JLabel(String.format("Round %d", characters.getRound()), JLabel.CENTER);
 
+		timerLabel = new TimerLabel();
+
 		JPanel right = new JPanel(new BorderLayout(0, 0));
 		right.setBackground(Color.white);
 		right.add(roundCounter, BorderLayout.PAGE_START);
+		right.add(timerLabel, BorderLayout.PAGE_END);
 		right.add(chPane, BorderLayout.CENTER);
 
 		getContentPane().add(right, BorderLayout.LINE_END);
@@ -85,10 +103,25 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 
 		dh = new DialogHandler(this, mc, indexer);
 
+		timer = new Timer(true);
+		timerRunning = false;
+		refreshTask();
+
 		pack();
 		setVisible(true);
 		addKeyListener(this);
 		instat = InputStatus.WAITING;
+	}
+
+	private void refreshTask()
+	{
+		timerCounter = new TimerTask()
+		{
+			public void run()
+			{
+				timerLabel.increment();
+			}
+		};
 	}
 
 	public void addCharacter(Character c)
@@ -122,6 +155,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	}
 
 	@Override
+	public void charactersReordered(Encounter e)
+	{
+	}
+
+	@Override
 	public void roundUpdated()
 	{
 		roundCounter.setText(String.format("Round %d", characters.getRound()));
@@ -139,7 +177,13 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 
 	public boolean rollInitiatives()
 	{
-		return dh.showInitiativeDialog(characters.getPCs());
+		boolean result = dh.showInitiativeDialog(characters.getPCs());
+		if (result)
+		{
+			characters.rollNPCInitiatives();
+			characters.sortInitiative();
+		}
+		return result;
 	}
 
 	public void sendMessage(String format, Object... args)
@@ -164,12 +208,41 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 		}
 	}
 
+	private void startTimer()
+	{
+		timerLabel.reset();
+		stopTimer();
+		refreshTask();
+		timer.scheduleAtFixedRate(timerCounter, 1000, 1000);
+		timerRunning = true;
+	}
+
+	private void resumeTimer()
+	{
+		stopTimer();
+		refreshTask();
+		timer.scheduleAtFixedRate(timerCounter, 1000, 1000);
+		timerRunning = true;
+	}
+
+	private void stopTimer()
+	{
+		timerCounter.cancel();
+		timerRunning = false;
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
 		char c = e.getKeyChar();
 		switch (c)
 		{
+		case ' ':
+			if (timerRunning)
+				stopTimer();
+			else
+				resumeTimer();
+			break;
 		case 'i':
 			if (rollInitiatives())
 				sendMessage("Successfully obtained party initiatives.");
@@ -207,9 +280,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 			{
 			case KeyEvent.VK_RIGHT:
 				nextCharacter();
+				startTimer();
 				break;
 			case KeyEvent.VK_LEFT:
 				prevCharacter();
+				startTimer();
 				break;
 			}
 			break;
