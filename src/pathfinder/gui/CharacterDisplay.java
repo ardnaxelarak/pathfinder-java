@@ -29,6 +29,7 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 	private Encounter list;
 	private Character current;
 	private Polygon arrow;
+
 	public CharacterDisplay(Encounter list)
 	{
 		this.list = list;
@@ -86,6 +87,12 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 
 	@Override
 	public void nameChanged(Character c)
+	{
+		repaint();
+	}
+
+	@Override
+	public void statusChanged(Character c)
 	{
 		repaint();
 	}

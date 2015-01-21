@@ -1,9 +1,11 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.event.EncounterListener;
 
+/* java package imports */
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +20,7 @@ public class Encounter implements Iterable<Character>
 	private List<Character> characters;
 	private List<EncounterListener> listeners;
 	private int round, index;
+
 	public Encounter()
 	{
 		listeners = new LinkedList<EncounterListener>();

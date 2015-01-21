@@ -7,9 +7,9 @@ import pathfinder.Group;
 import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
-import pathfinder.event.EncounterListener;
 import pathfinder.event.CharacterListener;
 import pathfinder.event.DamageEvent;
+import pathfinder.event.EncounterListener;
 import pathfinder.gui.CharacterDisplay;
 import pathfinder.gui.TimerLabel;
 import pathfinder.gui.dialog.DialogHandler;
@@ -182,6 +182,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	@Override
 	public void nameChanged(Character c)
 	{
+	}
+
+	@Override
+	public void statusChanged(Character c)
+	{
+		sendMessage("%s is now %s", c.getName(), c.getStatus().toString().toLowerCase());
 	}
 
 	@Override

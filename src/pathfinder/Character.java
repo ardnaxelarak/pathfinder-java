@@ -1,10 +1,12 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.CharacterTemplate;
 import pathfinder.enums.Status;
 import pathfinder.event.CharacterListener;
 import pathfinder.event.DamageEvent;
 
+/* java package imports */
 import java.util.LinkedList;
 
 public class Character
@@ -83,24 +85,36 @@ public class Character
 		conditions.add(cond);
 	}
 
+	/* Status setters */
+	private void setStatus(Status status)
+	{
+		boolean changed = (this.status != status);
+		this.status = status;
+		if (changed)
+		{
+			for (CharacterListener listener : listeners)
+				listener.statusChanged(this);
+		}
+	}
+
 	public void kill()
 	{
-		status = Status.DEAD;
+		setStatus(Status.DEAD);
 	}
 
 	public void startDying()
 	{
-		status = Status.DYING;
+		setStatus(Status.DYING);
 	}
 
 	public void disable()
 	{
-		status = Status.DISABLED;
+		setStatus(Status.DISABLED);
 	}
 
 	public void stabalize()
 	{
-		status = Status.STABLE;
+		setStatus(Status.STABLE);
 	}
 
 	public boolean makeDyingCheck()
@@ -228,12 +242,12 @@ public class Character
 			cl.nameChanged(this);
 	}
 
-
 	public String getTemplateName()
 	{
 		return template.getName();
 	}
 
+	/* Getter methods for stat modifiers */
 	public int getSTRModifier()
 	{
 		return template.getSTR() / 2 - 5;
