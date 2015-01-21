@@ -106,6 +106,7 @@ public class Functions
 
 	public static void log(String message, Object... args)
 	{
+		System.err.printf(message + "\n", args);
 	}
 
 	public static void close()

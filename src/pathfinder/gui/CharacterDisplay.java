@@ -3,8 +3,10 @@ package pathfinder.gui;
 import pathfinder.Character;
 import pathfinder.Encounter;
 import pathfinder.Functions;
+import pathfinder.enums.Status;
 import pathfinder.enums.TextLayout;
 import pathfinder.event.CharacterListener;
+import pathfinder.event.DamageEvent;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.Resources;
 
@@ -88,6 +90,12 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		repaint();
 	}
 
+	@Override
+	public void characterDamaged(DamageEvent e)
+	{
+		repaint();
+	}
+
 	private void updateSize()
 	{
 		setPreferredSize(new Dimension(LEFT_BORDER + WIDTH + BORDER, BORDER + (BORDER + HEIGHT) * list.size()));
@@ -113,6 +121,10 @@ public class CharacterDisplay extends JPanel implements EncounterListener, Chara
 		Functions.drawAlignedString(g, fm, hp, x + WIDTH - 5, y + HEIGHT - 3, TextLayout.BOTTOM_RIGHT);
 		String ac = String.format("AC: %d", c.getTemplate().getAC());
 		Functions.drawAlignedString(g, fm, ac, x + 5, y + HEIGHT - 3, TextLayout.BOTTOM_LEFT);
+		if (c.getStatus() != Status.NORMAL)
+		{
+			Functions.drawAlignedString(g, fm, c.getStatus().toString(), x + 5, y + HEIGHT / 2, TextLayout.CENTER_LEFT);
+		}
 	}
 
 	@Override

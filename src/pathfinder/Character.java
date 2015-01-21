@@ -3,6 +3,7 @@ package pathfinder;
 import pathfinder.CharacterTemplate;
 import pathfinder.enums.Status;
 import pathfinder.event.CharacterListener;
+import pathfinder.event.DamageEvent;
 
 import java.util.LinkedList;
 
@@ -169,6 +170,9 @@ public class Character
 			Functions.log("%s is disabled", name);
 		}
 		damage += amount;
+		DamageEvent e = new DamageEvent(this, amount);
+		for (CharacterListener cl : listeners)
+			cl.characterDamaged(e);
 	}
 
 	public void heal(int amount)
@@ -179,6 +183,9 @@ public class Character
 			return;
 		damage -= amount;
 		Functions.log("%s heals %d", name, amount);
+		DamageEvent e = new DamageEvent(this, -amount);
+		for (CharacterListener cl : listeners)
+			cl.characterDamaged(e);
 	}
 
 	public void heal(String amount)
@@ -293,5 +300,10 @@ public class Character
 	public int getDamage()
 	{
 		return damage;
+	}
+
+	public Status getStatus()
+	{
+		return status;
 	}
 }

@@ -51,4 +51,14 @@ public class DialogHandler
 	{
 		return textDialog.showRenameDialog(list);
 	}
+
+	public Character showDamageDialog(List<Character> list)
+	{
+		return textDialog.showDamageDialog(list);
+	}
+
+	public Character showHealingDialog(List<Character> list)
+	{
+		return textDialog.showHealingDialog(list);
+	}
 }

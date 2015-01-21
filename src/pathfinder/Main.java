@@ -31,11 +31,13 @@ public class Main
 		{
 			md.addGroup(party);
 		}
+		/*
 		Group enc = Functions.getEncounter(3);
 		if (enc != null)
 		{
 			md.addGroup(enc);
 		}
+		*/
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine())
 		{

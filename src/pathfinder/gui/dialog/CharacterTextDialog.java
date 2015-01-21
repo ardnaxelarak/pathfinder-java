@@ -1,6 +1,7 @@
 package pathfinder.gui.dialog;
 
 import pathfinder.Character;
+import pathfinder.Functions;
 import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.DialogType;
@@ -86,7 +87,33 @@ public class CharacterTextDialog extends SelectionDialog
 			return null;
 	}
 
-	// TODO: add damage dialog
+	public Character showDamageDialog(List<Character> list)
+	{
+		if (list.isEmpty())
+			return null;
+		textLabel.setText("Damage:");
+		type = DialogType.DAMAGE;
+		setup(list);
+		showDialog();
+		if (finished)
+			return characters[index];
+		else
+			return null;
+	}
+
+	public Character showHealingDialog(List<Character> list)
+	{
+		if (list.isEmpty())
+			return null;
+		textLabel.setText("Healing:");
+		type = DialogType.HEALING;
+		setup(list);
+		showDialog();
+		if (finished)
+			return characters[index];
+		else
+			return null;
+	}
 
 	private void setup(Collection<Character> list)
 	{
@@ -136,10 +163,19 @@ public class CharacterTextDialog extends SelectionDialog
 
 	private void finish()
 	{
+		int amt;
 		switch (type)
 		{
 		case RENAME:
 			characters[index].setName(textValue);
+			break;
+		case DAMAGE:
+			amt = Functions.roll(textValue);
+			characters[index].takeDamage(amt, false, false);
+			break;
+		case HEALING:
+			amt = Functions.roll(textValue);
+			characters[index].heal(amt);
 			break;
 		}
 		finished = true;

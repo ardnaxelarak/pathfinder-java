@@ -8,6 +8,8 @@ import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.EncounterListener;
+import pathfinder.event.CharacterListener;
+import pathfinder.event.DamageEvent;
 import pathfinder.gui.CharacterDisplay;
 import pathfinder.gui.TimerLabel;
 import pathfinder.gui.dialog.DialogHandler;
@@ -34,7 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class MainDisplay extends JFrame implements KeyListener, EncounterListener
+public class MainDisplay extends JFrame implements KeyListener, EncounterListener, CharacterListener
 {
 	private CharacterDisplay chdisp;
 	private Indexer<Character> indexer;
@@ -139,14 +141,20 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	public void charactersAdded(Collection<Character> list)
 	{
 		for (Character c : list)
+		{
+			c.addListener(this);
 			indexer.add(c);
+		}
 	}
 
 	@Override
 	public void charactersRemoved(Collection<Character> list)
 	{
 		for (Character c : list)
+		{
+			c.removeListener(this);
 			indexer.remove(c);
+		}
 	}
 
 	@Override
@@ -164,6 +172,25 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 	public void roundUpdated()
 	{
 		roundCounter.setText(String.format("Round %d", characters.getRound()));
+	}
+
+	@Override
+	public void initiativeModified(Character c)
+	{
+	}
+
+	@Override
+	public void nameChanged(Character c)
+	{
+	}
+
+	@Override
+	public void characterDamaged(DamageEvent e)
+	{
+		if (e.getAmount() >= 0)
+			sendMessage("%s takes %d damage!", e.getCharacter().getName(), e.getAmount());
+		else
+			sendMessage("%s heals %d damage!", e.getCharacter().getName(), -e.getAmount());
 	}
 
 	public void nextCharacter()
@@ -249,6 +276,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 			else
 				resumeTimer();
 			break;
+		case 'd':
+			dh.showDamageDialog(characters.getCharacters());
+			break;
+		case 'h':
+			dh.showHealingDialog(characters.getCharacters());
+			break;
 		case 'i':
 			if (rollInitiatives())
 				sendMessage("Successfully obtained party initiatives.");
@@ -256,11 +289,9 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
 				sendMessage("Failed to obtain party initiatives.");
 			break;
 		case 's':
-			Character ch = dh.showSingleSelectionDialog(characters.getCharacters());
-			if (ch == null)
-				sendMessage("No character selected.");
-			else
-				sendMessage("Selected %s.", ch.getName());
+			Character ch = characters.getCurrent();
+			if (ch != null)
+				ch.makeDyingCheck();
 			break;
 		case 'o':
 			List<Character> party = characters.getPCs();
