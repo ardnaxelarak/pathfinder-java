@@ -34,6 +34,11 @@ public class Functions
 		conn = new MySQLConnection(url, user, password);
 	}
 
+    public static MySQLConnection getConnection()
+    {
+        return conn;
+    }
+
 	public static CharacterTemplate getTemplate(int id)
 	{
 		try

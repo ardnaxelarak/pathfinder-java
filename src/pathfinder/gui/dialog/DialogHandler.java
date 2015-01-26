@@ -7,8 +7,13 @@ import pathfinder.gui.dialog.CharacterOrderingDialog;
 import pathfinder.gui.dialog.CharacterSelectionDialog;
 import pathfinder.gui.dialog.CharacterTextDialog;
 import pathfinder.gui.dialog.InitiativeDialog;
+import pathfinder.gui.dialog.SQLRowSelectionDialog;
+import pathfinder.sql.FloatSQLColumn;
+import pathfinder.sql.MySQLConnection;
+import pathfinder.sql.StringSQLColumn;
 
 import java.awt.Frame;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,13 +23,19 @@ public class DialogHandler
 	private CharacterSelectionDialog selectDialog;
 	private CharacterOrderingDialog orderDialog;
 	private CharacterTextDialog textDialog;
+    private SQLRowSelectionDialog encDialog, charDialog;
+    private MySQLConnection conn;
 
-	public DialogHandler(Frame parent, IndexingComparator<Character> mc, Indexer<Character> indexer)
+	public DialogHandler(Frame parent, IndexingComparator<Character> mc, Indexer<Character> indexer, MySQLConnection conn)
 	{
 		initDialog = new InitiativeDialog(parent, mc);
 		selectDialog = new CharacterSelectionDialog(parent, mc, indexer);
 		orderDialog = new CharacterOrderingDialog(parent, mc, indexer);
 		textDialog = new CharacterTextDialog(parent, mc, indexer);
+        encDialog = new SQLRowSelectionDialog(parent, "id", new StringSQLColumn("name"), new FloatSQLColumn("acr"));
+        charDialog = new SQLRowSelectionDialog(parent, "id", new StringSQLColumn("name"), new FloatSQLColumn("cr"));
+        
+        this.conn = conn;
 	}
 
 	public boolean showInitiativeDialog(Collection<Character> list)
@@ -61,4 +72,28 @@ public class DialogHandler
 	{
 		return textDialog.showHealingDialog(list);
 	}
+
+    public int showEncounterSelectionDialog()
+    {
+        try
+        {
+            return encDialog.showSingleSelectionDialog(conn.getEncounterList());
+        }
+        catch (SQLException e)
+        {
+            return -1;
+        }
+    }
+
+    public int showNewCharacterSelectionDialog()
+    {
+        try
+        {
+            return charDialog.showSingleSelectionDialog(conn.getCharacterList());
+        }
+        catch (SQLException e)
+        {
+            return -1;
+        }
+    }
 }

@@ -4,6 +4,7 @@ package pathfinder.gui;
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
+import pathfinder.Functions;
 import pathfinder.Group;
 import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
@@ -107,7 +108,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         left.add(messages, BorderLayout.PAGE_START);
         getContentPane().add(left, BorderLayout.CENTER);
 
-        dh = new DialogHandler(this, mc, indexer);
+        dh = new DialogHandler(this, mc, indexer, Functions.getConnection());
 
         timer = new Timer(true);
         timerRunning = false;
@@ -285,6 +286,15 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             else
                 resumeTimer();
             break;
+        case 'c':
+            int charID = dh.showNewCharacterSelectionDialog();
+            if (charID >= 0)
+            {
+                CharacterTemplate ct = Functions.getTemplate(charID);
+                if (ct != null)
+                    addCharacter(new Character(ct));
+            }
+            break;
         case 'd':
             dh.showDamageDialog(characters.getCharacters());
             break;
@@ -306,6 +316,15 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             List<Character> party = characters.getPCs();
             Collections.sort(party, mc);
             dh.showOrderingDialog(party);
+            break;
+        case 'E':
+            int encID = dh.showEncounterSelectionDialog();
+            if (encID >= 0)
+            {
+                Group enc = Functions.getEncounter(encID);
+                if (enc != null)
+                    addGroup(enc);
+            }
             break;
         case 'N':
             dh.showRenameDialog(characters.getCharacters());

@@ -20,6 +20,7 @@ public class MySQLConnection
 	private Connection con;
 	private Statement st;
 	private PreparedStatement charSelect, encSelect, partySelect;
+    private PreparedStatement encList, charList;
 
 	public MySQLConnection(String url, String user, String password) throws SQLException
 	{
@@ -28,12 +29,24 @@ public class MySQLConnection
 		charSelect = con.prepareStatement("SELECT * FROM characters WHERE id = ?");
 		encSelect = con.prepareStatement("SELECT creature, num FROM e_creatures WHERE eid = ?");
 		partySelect = con.prepareStatement("SELECT pc FROM parties WHERE campaign = ?");
+        encList = con.prepareStatement("SELECT id, name, acr FROM encounters ORDER BY acr");
+        charList = con.prepareStatement("SELECT id, name, cr FROM characters ORDER BY name");
 	}
 
 	public ResultSet execute(String query) throws SQLException
 	{
 		return st.executeQuery(query);
 	}
+
+    public ResultSet getEncounterList() throws SQLException
+    {
+        return encList.executeQuery();
+    }
+
+    public ResultSet getCharacterList() throws SQLException
+    {
+        return charList.executeQuery();
+    }
 
 	public CharacterTemplate loadCharacter(int id) throws SQLException
 	{
