@@ -1,5 +1,6 @@
 package pathfinder.gui;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
@@ -14,6 +15,7 @@ import pathfinder.gui.CharacterDisplay;
 import pathfinder.gui.TimerLabel;
 import pathfinder.gui.dialog.DialogHandler;
 
+/* java package imports */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -29,6 +31,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/* javax package imports */
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

@@ -87,6 +87,13 @@
 		</javac>
 	</target>
 
+    <target name="run" depends="compile">
+        <java classname="pathfinder.Main" fork="true" spawn="true">
+            <classpath refid="project.classpath"/>
+            <classpath path="${build.classes.path}"/>
+        </java>
+    </target>
+
 	<target name="jar" depends="compile, check">
 		<jar basedir="${build.classes.path}" destfile="${jarname}">
 			<manifest>

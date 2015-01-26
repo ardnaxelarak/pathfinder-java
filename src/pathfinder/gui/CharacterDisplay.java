@@ -1,5 +1,6 @@
 package pathfinder.gui;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.Encounter;
 import pathfinder.Functions;
@@ -10,6 +11,7 @@ import pathfinder.event.DamageEvent;
 import pathfinder.event.EncounterListener;
 import pathfinder.gui.Resources;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -18,6 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.Collection;
 
+/* javax package imports */
 import javax.swing.JPanel;
 
 public class CharacterDisplay extends JPanel implements EncounterListener, CharacterListener

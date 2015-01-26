@@ -1,7 +1,9 @@
 package pathfinder.gui.dialog;
 
+/* local package imports */
 import pathfinder.gui.Resources;
 
+/* java package imports */
 import java.awt.Frame;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -9,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 
+/* javax package imports */
 import javax.swing.JDialog;
 import javax.swing.JRootPane;
 

@@ -1,10 +1,12 @@
 package pathfinder;
 
+/* java package imports */
 import java.util.ArrayList;
 
 public class Indexer<T>
 {
 	private ArrayList<T> list;
+
 	public Indexer()
 	{
 		list = new ArrayList<T>(52);

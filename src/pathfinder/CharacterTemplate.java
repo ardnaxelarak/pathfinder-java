@@ -1,21 +1,23 @@
 package pathfinder;
 
+/* java package imports */
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class CharacterTemplate implements Comparable<CharacterTemplate>
 {
-	private final int id, strength, dexterity, constitution, intelligence, wisdom,
-				charisma, initiative_modifier, speed, fly_speed, swim_speed,
-				climb_speed, burrow_speed, space, reach, ac, touch_ac,
-				flat_footed_ac, fast_healing, regeneration, fort, ref,
-				will, dr, sr;
+	private final int id, strength, dexterity, constitution, intelligence,
+				wisdom, charisma, initiative_modifier, speed, fly_speed,
+				swim_speed, climb_speed, burrow_speed, space, reach, ac,
+				touch_ac, flat_footed_ac, fast_healing, regeneration,
+				fort, ref, will, dr, sr;
 	private final String name, base_attack_bonus, fly_maneuver,
 				regeneration_bypass, dr_bypass, hp;
 	private final URI url;
 	private final boolean ferocity;
 	private final double cr;
+
 	public CharacterTemplate(ResultSet set) throws SQLException
 	{
 		set.next();
@@ -59,6 +61,7 @@ public final class CharacterTemplate implements Comparable<CharacterTemplate>
 			url = null;
 	}
 
+	/* accessor methods */
 	public int getID()
 	{
 		return id;
@@ -229,6 +232,7 @@ public final class CharacterTemplate implements Comparable<CharacterTemplate>
 		return url;
 	}
 
+	/* implementation of Comparable<CharacterTemplate> */
 	@Override
 	public int compareTo(CharacterTemplate ct)
 	{

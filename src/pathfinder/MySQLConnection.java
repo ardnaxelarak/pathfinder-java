@@ -1,7 +1,9 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.CharacterTemplate;
 
+/* java package imports */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,6 +17,7 @@ public class MySQLConnection
 	private Connection con;
 	private Statement st;
 	private PreparedStatement charSelect, encSelect, partySelect;
+
 	public MySQLConnection(String url, String user, String password) throws SQLException
 	{
 		con = DriverManager.getConnection(url, user, password);

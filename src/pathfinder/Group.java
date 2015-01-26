@@ -1,8 +1,10 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 
+/* java package imports */
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;

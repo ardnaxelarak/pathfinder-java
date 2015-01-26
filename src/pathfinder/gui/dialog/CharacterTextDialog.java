@@ -1,5 +1,6 @@
 package pathfinder.gui.dialog;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.Functions;
 import pathfinder.Indexer;
@@ -15,6 +16,7 @@ import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.IndexingMapper;
 import pathfinder.mapping.NameMapper;
 
+/* java package imports */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/* javax package imports */
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -42,6 +45,7 @@ public class CharacterTextDialog extends SelectionDialog
 	private ArrowColumn arrowColumn;
 	private MappedTextColumn<Character> nameColumn, idColumn, dashColumn;
 	private CharacterBorderColumn borderColumn;
+
 	public CharacterTextDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
 	{
 		super(owner);
