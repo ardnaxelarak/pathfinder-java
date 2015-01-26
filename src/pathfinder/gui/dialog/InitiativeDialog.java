@@ -136,6 +136,12 @@ public class InitiativeDialog extends SelectionDialog
 		case KeyEvent.VK_ACCEPT:
 			advance();
 			break;
+        case KeyEvent.VK_PAGE_DOWN:
+            dp.nextPage();
+            break;
+        case KeyEvent.VK_PAGE_UP:
+            dp.prevPage();
+            break;
 		}
 	}
 

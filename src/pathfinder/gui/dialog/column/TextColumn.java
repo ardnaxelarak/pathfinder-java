@@ -8,8 +8,8 @@ import java.awt.Font;
 
 public class TextColumn extends MappedTextColumn<String>
 {
-	public TextColumn(Font font, int xGap, int yGap, Color backColor, Color foreColor)
-	{
-		super(font, new IdentityMapper<String>(), xGap, yGap, backColor, foreColor);
-	}
+    public TextColumn(Font font, int xGap, int yGap, Color backColor, Color foreColor)
+    {
+        super(font, new IdentityMapper<String>(), xGap, yGap, backColor, foreColor);
+    }
 }

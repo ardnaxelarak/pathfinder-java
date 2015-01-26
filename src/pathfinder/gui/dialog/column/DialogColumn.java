@@ -1,8 +1,9 @@
 package pathfinder.gui.dialog.column;
 
 import pathfinder.gui.dialog.FontMetricsFetcher;
+import pathfinder.gui.dialog.column.RowData;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public interface DialogColumn
 {
@@ -16,5 +17,5 @@ public interface DialogColumn
 
     public void setFontMetricsFetcher(FontMetricsFetcher fmf);
 
-    public void draw(Graphics g, int x, int y, int width, int height, int border);
+    public void draw(Graphics2D g, RowData rows);
 }

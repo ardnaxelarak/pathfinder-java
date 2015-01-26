@@ -1,9 +1,11 @@
 package pathfinder.gui.dialog.column;
 
 import pathfinder.gui.dialog.column.BasicColumn;
+import pathfinder.gui.dialog.column.CellData;
+import pathfinder.gui.dialog.column.RowData;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class FillColumn extends BasicColumn
 {
@@ -35,15 +37,13 @@ public class FillColumn extends BasicColumn
         return colors[index];
     }
 
-    public void draw(Graphics g, int x, int y, int width, int height, int border)
+    public void draw(Graphics2D g, RowData rows)
     {
-        int curY = y;
-        for (Color color : colors)
+        for (CellData cd : rows)
         {
-            g.setColor(color);
-            g.fillRect(x, curY, width, height);
-            curY += height + border;
+            int i = cd.getIndex();
+            g.setColor(colors[i]);
+            g.fill(cd.getRectangle());
         }
-        super.draw(g, x, y, width, height, border);
     }
 }

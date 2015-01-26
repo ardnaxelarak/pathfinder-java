@@ -3,12 +3,13 @@ package pathfinder.gui.dialog.column;
 import pathfinder.Functions;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
+import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.DialogColumn;
+import pathfinder.gui.dialog.column.RowData;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -115,21 +116,18 @@ public class BasicTextColumn implements DialogColumn
     }
 
     @Override
-    public void draw(Graphics g, int x, int y, int width, int height, int border)
+    public void draw(Graphics2D g, RowData rows)
     {
-        Graphics2D g2 = (Graphics2D)g;
-        g2.setFont(font);
-        Rectangle outer = new Rectangle(x, y, width, height);
-        Rectangle inner = new Rectangle(outer);
-        inner.grow(-xGap, -yGap);
-        for (int i = 0; i < num; i++)
+        g.setFont(font);
+        for (CellData cd : rows)
         {
-            g2.setColor(backColors[i]);
-            g2.fill(outer);
-            g2.setColor(foreColors[i]);
-            Functions.drawAlignedString(g2, fm, texts[i], inner, layout);
-            inner.translate(0, height + border);
-            outer.translate(0, height + border);
+            int i = cd.getIndex();
+            Rectangle rect = cd.getRectangle();
+            g.setColor(backColors[i]);
+            g.fill(rect);
+            g.setColor(foreColors[i]);
+            rect.grow(-xGap, -yGap);
+            Functions.drawAlignedString(g, fm, texts[i], rect, layout);
         }
     }
 }

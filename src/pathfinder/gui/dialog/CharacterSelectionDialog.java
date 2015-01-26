@@ -6,8 +6,8 @@ import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.MappedFillColumn;
 import pathfinder.gui.dialog.column.DoubleMappedTextColumn;
+import pathfinder.gui.dialog.column.MappedFillColumn;
 import pathfinder.gui.dialog.column.MappedTextColumn;
 import pathfinder.mapping.IdentityMapper;
 import pathfinder.mapping.IndexingMapper;
@@ -18,8 +18,6 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.swing.JScrollPane;
 
 public class CharacterSelectionDialog extends SelectionDialog
 {
@@ -34,7 +32,6 @@ public class CharacterSelectionDialog extends SelectionDialog
     private MappedTextColumn<Character> nameColumn, idColumn;
     private DoubleMappedTextColumn<String, Character> selectedColumn;
     private MappedFillColumn<Character> borderColumn;
-    private JScrollPane sp;
 
     public CharacterSelectionDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
     {
@@ -52,8 +49,7 @@ public class CharacterSelectionDialog extends SelectionDialog
         borderColumn = new MappedFillColumn<Character>(4, Resources.BACK_COLOR_MAPPER);
         dp = new DisplayPanel(Resources.BORDER_5, borderColumn, idColumn, selectedColumn, nameColumn, borderColumn, Resources.BORDER_5);
 
-        sp = new JScrollPane(dp);
-        getContentPane().add(sp);
+        getContentPane().add(dp);
     }
 
     public Character showSingleSelectionDialog(Collection<Character> list)
@@ -141,6 +137,12 @@ public class CharacterSelectionDialog extends SelectionDialog
                 finished = true;
                 close();
             }
+            break;
+        case KeyEvent.VK_PAGE_DOWN:
+            dp.nextPage();
+            break;
+        case KeyEvent.VK_PAGE_UP:
+            dp.prevPage();
             break;
         }
     }

@@ -216,6 +216,18 @@ public class CharacterTextDialog extends SelectionDialog
 				finish();
 			}
 			break;
+        case KeyEvent.VK_PAGE_DOWN:
+            if (!selected)
+            {
+                dp.nextPage();
+            }
+            break;
+        case KeyEvent.VK_PAGE_UP:
+            if (!selected)
+            {
+                dp.prevPage();
+            }
+            break;
 		case KeyEvent.VK_BACK_SPACE:
 			if (selected)
 			{

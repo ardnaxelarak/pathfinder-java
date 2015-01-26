@@ -4,12 +4,13 @@ import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.BasicTextColumn;
 import pathfinder.gui.dialog.column.DialogColumn;
+import pathfinder.gui.dialog.column.RowData;
 import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class MappedTextColumn<T> implements DialogColumn
@@ -131,10 +132,10 @@ public class MappedTextColumn<T> implements DialogColumn
     }
 
     @Override
-    public void draw(Graphics g, int x, int y, int width, int height, int border)
+    public void draw(Graphics2D g, RowData rows)
     {
         if (updateOnPaint)
             updateObjects();
-        base.draw(g, x, y, width, height, border);
+        base.draw(g, rows);
     }
 }

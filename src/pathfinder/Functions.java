@@ -1,12 +1,12 @@
 package pathfinder;
 
 import pathfinder.Group;
-import pathfinder.MySQLConnection;
 import pathfinder.enums.TextLayout;
 import pathfinder.parsing.DiceRollLexer;
 import pathfinder.parsing.DiceRollParser;
 import pathfinder.parsing.EncounterModifierLexer;
 import pathfinder.parsing.EncounterModifierParser;
+import pathfinder.sql.MySQLConnection;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;

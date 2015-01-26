@@ -4,12 +4,13 @@ import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.BasicTextColumn;
 import pathfinder.gui.dialog.column.DialogColumn;
+import pathfinder.gui.dialog.column.RowData;
 import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
@@ -108,7 +109,7 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
     public void setObject1(int index, T1 t)
     {
         list1.set(index, t);
-        updateObject(index);
+        updateObject1(index);
     }
 
     public T1 getObject1(int index)
@@ -119,7 +120,7 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
     public void setObject2(int index, T2 t)
     {
         list2.set(index, t);
-        updateObject(index);
+        updateObject2(index);
     }
 
     public T2 getObject2(int index)
@@ -127,12 +128,17 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
         return list2.get(index);
     }
 
-    private void updateObject(int index)
+    private void updateObject1(int index)
     {
         T1 t1 = list1.get(index);
-        T2 t2 = list2.get(index);
 
         base.setText(index, textMapper.getValue(t1));
+    }
+
+    private void updateObject2(int index)
+    {
+        T2 t2 = list2.get(index);
+
         base.setBackColor(index, backColorMapper.getValue(t2));
         base.setForeColor(index, foreColorMapper.getValue(t2));
     }
@@ -140,14 +146,17 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
     public void updateObjects()
     {
         for (int i = 0; i < base.getNum(); i++)
-            updateObject(i);
+        {
+            updateObject1(i);
+            updateObject2(i);
+        }
     }
 
     @Override
-    public void draw(Graphics g, int x, int y, int width, int height, int border)
+    public void draw(Graphics2D g, RowData rows)
     {
         if (updateOnPaint)
             updateObjects();
-        base.draw(g, x, y, width, height, border);
+        base.draw(g, rows);
     }
 }

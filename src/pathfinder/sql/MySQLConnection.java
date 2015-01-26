@@ -1,7 +1,10 @@
-package pathfinder;
+package pathfinder.sql;
 
 /* local package imports */
+import pathfinder.Character;
 import pathfinder.CharacterTemplate;
+import pathfinder.Functions;
+import pathfinder.Group;
 
 /* java package imports */
 import java.sql.Connection;
