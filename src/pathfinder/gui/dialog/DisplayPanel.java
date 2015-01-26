@@ -2,7 +2,7 @@ package pathfinder.gui.dialog;
 
 import pathfinder.Functions;
 import pathfinder.gui.dialog.FontMetricsFetcher;
-import pathfinder.gui.dialog.SelectionColumn;
+import pathfinder.gui.dialog.column.DialogColumn;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,12 +15,12 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 	private int[] widths;
 	private int border = 5;
 	private int numRows;
-	private SelectionColumn[] columns;
+	private DialogColumn[] columns;
 
-	public DisplayPanel(SelectionColumn... columns)
+	public DisplayPanel(DialogColumn... columns)
 	{
 		this.columns = columns;
-		for (SelectionColumn sc : columns)
+		for (DialogColumn sc : columns)
 			sc.setFontMetricsFetcher(this);
 		widths = new int[columns.length];
 		numRows = 0;
@@ -29,7 +29,7 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 	public void setNumRows(int numRows)
 	{
 		this.numRows = numRows;
-		for (SelectionColumn sc : columns)
+		for (DialogColumn sc : columns)
 			sc.setNum(numRows);
 	}
 
@@ -40,7 +40,7 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 		int totWidth = 0;
 		for (int i = 0; i < num; i++)
 		{
-			SelectionColumn sc = columns[i];
+			DialogColumn sc = columns[i];
 			widths[i] = sc.getMaxWidth();
 			int curH = sc.getMaxHeight();
 			if (curH > maxHeight)
@@ -60,7 +60,7 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
 		int num = columns.length;
 		for (int i = 0; i < num; i++)
 		{
-			SelectionColumn sc = columns[i];
+			DialogColumn sc = columns[i];
 			sc.draw(g, x, border, widths[i], height, border);
 			x += widths[i];
 		}

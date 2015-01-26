@@ -11,6 +11,7 @@ import pathfinder.parsing.EncounterModifierParser;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.sql.SQLException;
 import java.util.Random;
@@ -165,8 +166,50 @@ public class Functions
 		g.drawString(text, xv, yv);
 	}
 
+	public static void drawAlignedString(Graphics g, FontMetrics fm, String text, Rectangle rect, TextLayout tl)
+	{
+		double xv, yv;
+		switch (tl.getHorizontalLayout())
+		{
+		case LEFT:
+			xv = rect.getX();
+			break;
+		case RIGHT:
+			xv = rect.getX() + rect.getWidth() - fm.stringWidth(text);
+			break;
+		case CENTER:
+			xv = rect.getX() + (rect.getWidth() - fm.stringWidth(text)) / 2;
+			break;
+		default:
+			throw new UnsupportedOperationException("Undefined HorizontalLayout");
+		}
+		switch (tl.getVerticalLayout())
+		{
+		case TOP:
+			yv = rect.getY() + fm.getAscent();
+			break;
+		case CENTER:
+			yv = rect.getY() + (rect.getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+			break;
+		case BOTTOM:
+			yv = rect.getY() + rect.getHeight() - fm.getDescent();
+			break;
+		case BASELINE:
+			yv = rect.getY() + rect.getHeight();
+			break;
+		default:
+			throw new UnsupportedOperationException("Undefined VerticalLayout");
+		}
+		g.drawString(text, (int)xv, (int)yv);
+	}
+
 	public static void drawAlignedString(Graphics g, String text, int x, int y, TextLayout tl)
 	{
 		drawAlignedString(g, g.getFontMetrics(), text, x, y, tl);
+	}
+
+	public static void drawAlignedString(Graphics g, String text, Rectangle rect, TextLayout tl)
+	{
+		drawAlignedString(g, g.getFontMetrics(), text, rect, tl);
 	}
 }

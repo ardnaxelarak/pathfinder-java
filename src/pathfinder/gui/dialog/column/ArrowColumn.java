@@ -1,13 +1,13 @@
-package pathfinder.gui.dialog;
+package pathfinder.gui.dialog.column;
 
 import pathfinder.gui.dialog.FontMetricsFetcher;
-import pathfinder.gui.dialog.SelectionColumn;
+import pathfinder.gui.dialog.column.DialogColumn;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-public class ArrowColumn implements SelectionColumn
+public class ArrowColumn implements DialogColumn
 {
 	private int size, index, num;
 	private Color color;

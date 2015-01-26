@@ -1,13 +1,14 @@
-package pathfinder.gui.dialog;
+package pathfinder.gui.dialog.column;
 
-import pathfinder.gui.dialog.SelectionColumn;
+import pathfinder.gui.dialog.FontMetricsFetcher;
+import pathfinder.gui.dialog.column.DialogColumn;
 
 import java.awt.Graphics;
 
-public class BorderColumn implements SelectionColumn
+public class BasicColumn implements DialogColumn
 {
 	private int width, num;
-	public BorderColumn(int width)
+	public BasicColumn(int width)
 	{
 		this.width = width;
 		num = 0;

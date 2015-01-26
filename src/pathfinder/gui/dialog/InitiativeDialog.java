@@ -4,10 +4,10 @@ import pathfinder.Character;
 import pathfinder.Functions;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.gui.Resources;
-import pathfinder.gui.dialog.ArrowColumn;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.MappedTextColumn;
-import pathfinder.gui.dialog.TextColumn;
+import pathfinder.gui.dialog.column.ArrowColumn;
+import pathfinder.gui.dialog.column.MappedTextColumn;
+import pathfinder.gui.dialog.column.TextColumn;
 import pathfinder.mapping.Mapper;
 
 import java.awt.Color;
@@ -61,7 +61,7 @@ public class InitiativeDialog extends SelectionDialog
 		dp.setNumRows(num);
 		for (int i = 0; i < num; i++)
 		{
-			rollColumn.setText(i, "");
+			rollColumn.setObject(i, "");
 			nameColumn.setObject(i, characters[i]);
 		}
 
@@ -116,11 +116,11 @@ public class InitiativeDialog extends SelectionDialog
 			if (rolls[index] == 0)
 			{
 				filled[index] = false;
-				rollColumn.setText(index, "");
+				rollColumn.setObject(index, "");
 			}
 			else
 			{
-				rollColumn.setText(index, String.format("%d", rolls[index]));
+				rollColumn.setObject(index, String.format("%d", rolls[index]));
 			}
 			dp.repaint();
 			break;
@@ -146,7 +146,7 @@ public class InitiativeDialog extends SelectionDialog
 		if (c >= '0' && c <= '9')
 		{
 			rolls[index] = rolls[index] * 10 + (c - '0');
-			rollColumn.setText(index, String.format("%d", rolls[index]));
+			rollColumn.setObject(index, String.format("%d", rolls[index]));
 			filled[index] = true;
 			dp.repaint();
 		}

@@ -6,12 +6,12 @@ import pathfinder.Functions;
 import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.DialogType;
-import pathfinder.enums.VerticalLayout;
+import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
-import pathfinder.gui.dialog.ArrowColumn;
-import pathfinder.gui.dialog.CharacterBorderColumn;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.MappedTextColumn;
+import pathfinder.gui.dialog.column.ArrowColumn;
+import pathfinder.gui.dialog.column.MappedFillColumn;
+import pathfinder.gui.dialog.column.MappedTextColumn;
 import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.IndexingMapper;
 import pathfinder.mapping.NameMapper;
@@ -44,7 +44,7 @@ public class CharacterTextDialog extends SelectionDialog
 	private DialogType type;
 	private ArrowColumn arrowColumn;
 	private MappedTextColumn<Character> nameColumn, idColumn, dashColumn;
-	private CharacterBorderColumn borderColumn;
+	private MappedFillColumn<Character> borderColumn;
 
 	public CharacterTextDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
 	{
@@ -57,12 +57,12 @@ public class CharacterTextDialog extends SelectionDialog
 
 		idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new IndexingMapper<Character>(indexer), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
 		// idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
-		idColumn.setVerticalLayout(VerticalLayout.BOTTOM);
+		idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
 		dashColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new ConstantMapper<Character, String>("-"), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
-		dashColumn.setVerticalLayout(VerticalLayout.BOTTOM);
+		dashColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
-		borderColumn = new CharacterBorderColumn(4, Resources.PC_COLOR, Resources.NPC_COLOR);
+		borderColumn = new MappedFillColumn<Character>(4, Resources.BACK_COLOR_MAPPER);
 		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, borderColumn, idColumn, dashColumn, nameColumn, borderColumn, Resources.BORDER_5);
 		getContentPane().add(dp, BorderLayout.CENTER);
 
@@ -161,7 +161,7 @@ public class CharacterTextDialog extends SelectionDialog
 	{
 		dashColumn.setObject(index, c);
 		idColumn.setObject(index, c);
-		borderColumn.setCharacter(index, c);
+		borderColumn.setObject(index, c);
 		nameColumn.setObject(index, c);
 	}
 
