@@ -51,6 +51,11 @@ public class Functions
 		}
 	}
 
+    public static Skills getSkills() throws SQLException
+    {
+        return conn.loadSkills();
+    }
+
 	public static Group getEncounter(int id)
 	{
 		try

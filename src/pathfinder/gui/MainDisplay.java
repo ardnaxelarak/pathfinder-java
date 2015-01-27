@@ -1,12 +1,14 @@
 package pathfinder.gui;
 
 /* local package imports */
+import pathfinder.ArrayIndexer;
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
 import pathfinder.Functions;
 import pathfinder.Group;
-import pathfinder.Indexer;
+import pathfinder.Skill;
+import pathfinder.Skills;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.CharacterListener;
@@ -24,7 +26,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.Arrays;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +45,7 @@ import javax.swing.JTextArea;
 public class MainDisplay extends JFrame implements KeyListener, EncounterListener, CharacterListener
 {
     private CharacterDisplay chdisp;
-    private Indexer<Character> indexer;
+    private ArrayIndexer<Character> indexer;
     private Encounter characters;
     private InputStatus instat = InputStatus.DISABLED;
     private Character current;
@@ -53,7 +55,9 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
     private IndexingComparator<Character> mc;
     private Timer timer;
     private TimerLabel timerLabel;
+    private Skills skills;
     private boolean timerRunning;
+    private int campaignID;
 
     private TimerTask timerCounter = new TimerTask()
     {
@@ -63,9 +67,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         }
     };
 
-    public MainDisplay()
+    public MainDisplay(int campaignID) throws SQLException
     {
         super("Pathfinder");
+
+        this.campaignID = campaignID;
 
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.white);
@@ -73,8 +79,10 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         characters = new Encounter();
         characters.addListener(this);
-        indexer = new Indexer<Character>();
+        indexer = new ArrayIndexer<Character>();
         mc = new IndexingComparator<Character>(indexer);
+
+        skills = Functions.getSkills();
 
         chdisp = new CharacterDisplay(characters);
         JScrollPane chPane = new JScrollPane(chdisp,
@@ -108,7 +116,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         left.add(messages, BorderLayout.PAGE_START);
         getContentPane().add(left, BorderLayout.CENTER);
 
-        dh = new DialogHandler(this, mc, indexer, Functions.getConnection());
+        dh = new DialogHandler(this, indexer, Functions.getConnection(), campaignID, skills);
 
         timer = new Timer(true);
         timerRunning = false;
@@ -333,10 +341,20 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             openPages();
             break;
         case 'R':
-            Character[] list = dh.showMultipleSelectionDialog(characters.getCharacters());
+            List<Character> list = dh.showMultipleSelectionDialog(characters.getCharacters());
             if (list != null)
-                characters.removeAll(Arrays.asList(list));
+                characters.removeAll(list);
             break;
+        case 'S':
+            Skill s = dh.showSingleSkillSelectionDialog();
+            if (s != null)
+            {
+                sendMessage(s.getName());
+                for (Character chr : characters.getPCs())
+                {
+                    sendMessage("%s (%s)", chr, Functions.modifierString(skills.getModifier(s, chr)));
+                }
+            }
         }
     }
 

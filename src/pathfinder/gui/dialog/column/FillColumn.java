@@ -45,5 +45,6 @@ public class FillColumn extends BasicColumn
             g.setColor(colors[i]);
             g.fill(cd.getRectangle());
         }
+        super.draw(g, rows);
     }
 }

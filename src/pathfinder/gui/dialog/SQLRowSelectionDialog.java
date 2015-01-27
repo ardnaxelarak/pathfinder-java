@@ -48,11 +48,14 @@ public class SQLRowSelectionDialog extends SelectionDialog
         for (int i = 0; i < columns.length; i++)
             dataColumns[i] = new TextColumn(Resources.FONT_12, 4, 2, backColor, Color.black);
 
-        DialogColumn[] panelColumns = new DialogColumn[columns.length + 2];
-        panelColumns[0] = indexColumn;
-        panelColumns[1] = selectedColumn;
+        DialogColumn[] panelColumns = new DialogColumn[columns.length + 4];
+        int k = 0;
+        panelColumns[k++] = Resources.BORDER_5;
+        panelColumns[k++] = indexColumn;
+        panelColumns[k++] = selectedColumn;
         for (int i = 0; i < dataColumns.length; i++)
-            panelColumns[i + 2] = dataColumns[i];
+            panelColumns[k++] = dataColumns[i];
+        panelColumns[k++] = Resources.BORDER_5;
 
         dp = new DisplayPanel(panelColumns);
 

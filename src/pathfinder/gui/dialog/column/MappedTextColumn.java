@@ -3,7 +3,7 @@ package pathfinder.gui.dialog.column;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.BasicTextColumn;
-import pathfinder.gui.dialog.column.DialogColumn;
+import pathfinder.gui.dialog.column.ObjectColumn;
 import pathfinder.gui.dialog.column.RowData;
 import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.Mapper;
@@ -13,7 +13,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-public class MappedTextColumn<T> implements DialogColumn
+public class MappedTextColumn<T> implements ObjectColumn<T>
 {
     private BasicTextColumn base;
     private ArrayList<T> list;

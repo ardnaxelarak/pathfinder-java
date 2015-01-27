@@ -32,7 +32,6 @@
 		<module name="NoWhitespaceBefore"/>
 		<module name="ParenPad"/>
 		<module name="SeparatorWrap"/>
-		<module name="NPathComplexity"/>
 		<module name="TodoComment"/>
 		<module name="UnusedImports"/>
 		<module name="EmptyLineSeparator">
@@ -40,7 +39,7 @@
 			<property name="allowNoEmptyLineBetweenFields" value="true"/>
 		</module>
 		<module name="ImportOrder">
-			<property name="groups" value="pathfinder,java"/>
+			<property name="groups" value="pathfinder,com.google,java"/>
 			<property name="separated" value="true"/>
 		</module>
 		<module name="LeftCurly">
@@ -53,5 +52,6 @@
 		<module name="MultipleStringLiterals"/>
 		<module name="NeedBraces"/>
 		<module name="CyclomaticComplexity"/>
+		<module name="NPathComplexity"/>
 	</module>
 </module>

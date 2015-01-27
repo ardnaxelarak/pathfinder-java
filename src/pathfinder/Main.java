@@ -25,7 +25,7 @@ public class Main
 		{
 			e.printStackTrace();
 		}
-		MainDisplay md = new MainDisplay();
+		MainDisplay md = new MainDisplay(1);
 		Group party = Functions.getParty(1);
 		if (party != null)
 		{

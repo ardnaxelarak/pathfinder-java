@@ -1,92 +1,73 @@
 package pathfinder;
 
-/* java package imports */
-import java.util.ArrayList;
+/* local package imports */
+import pathfinder.comps.IndexingComparator;
+import pathfinder.mapping.IndexingMapper;
 
-public class Indexer<T>
+/* guava package imports */
+import com.google.common.base.Optional;
+
+public abstract class Indexer<T>
 {
-	private ArrayList<T> list;
+    public abstract Optional<T> get(int index);
 
-	public Indexer()
+	public Optional<T> fromChar(char identifier)
 	{
-		list = new ArrayList<T>(52);
-		for (int i = 0; i < 52; i++)
-			list.add(null);
+        Optional<Integer> index = indexFromChar(identifier);
+        if (index.isPresent())
+        {
+            return get(index.get().intValue());
+        }
+        else
+        {
+            return Optional.absent();
+        }
 	}
 
-	public char add(T t)
-	{
-		int i = list.size() - 1;
-		char id = ' ';
-		if (list.get(i) != null)
-		{
-			for (i = 0; i < list.size() && list.get(i) != null; i++);
-			if (i >= 52)
-				list.add(t);
-			else
-				list.set(i, t);
-			if (i < 26)
-				id = (char)('a' + i);
-			else if (i < 52)
-				id = (char)('A' + i - 26);
-			else
-				id = '+';
-		}
-		else
-		{
-			for (; i >= 0 && list.get(i) == null; i--);
-			i++;
-			list.set(i, t);
-			if (i < 26)
-				id = (char)('a' + i);
-			else
-				id = (char)('A' + i - 26);
-		}
-		return id;
-	}
-
-	public T fromChar(char identifier)
-	{
-		if (identifier >= 'a' && identifier <= 'z')
-			return list.get(identifier - 'a');
-		if (identifier >= 'A' && identifier <= 'Z')
-			return list.get(identifier - 'A' + 26);
-		return null;
-	}
-
-	public int getIndex(T t)
-	{
-		return list.indexOf(t);
-	}
+	public abstract int getIndex(T t);
 
 	public char getChar(T t)
 	{
-		int i = list.indexOf(t);
-		if (i < 0)
+        return charFromIndex(getIndex(t));
+	}
+
+    public static char charFromIndex(int index)
+    {
+		if (index < 0)
 			return ' ';
-		else if (i < 26)
-			return (char)('a' + i);
-		else if (i < 52)
-			return (char)('A' + i - 26);
+		else if (index < 26)
+			return (char)('a' + index);
+		else if (index < 52)
+			return (char)('A' + index - 26);
 		else
 			return '+';
-	}
+    }
 
-	public void remove(T t)
-	{
-		int i = list.indexOf(t);
-		list.set(i, null);
-		condense();
-	}
+    public static char charFromIndex(Optional<Integer> index)
+    {
+        if (index.isPresent())
+            return charFromIndex(index.get());
+        else
+            return ' ';
+    }
 
-	private void condense()
-	{
-		if (list.size() <= 52)
-			return;
-		for (int i = 0; i < 52 && list.size() > 52; i++)
-		{
-			if (list.get(i) == null)
-				list.set(i, list.remove(52));
-		}
-	}
+    public static Optional<Integer> indexFromChar(char c)
+    {
+        if (c >= 'a' && c <= 'z')
+            return Optional.of(c - 'a');
+        else if (c >= 'A' && c <= 'Z')
+            return Optional.of(c - 'A' + 26);
+        else
+            return Optional.absent();
+    }
+
+    public IndexingMapper<T> getMapper()
+    {
+        return new IndexingMapper<T>(this);
+    }
+
+    public IndexingComparator<T> getComparator()
+    {
+        return new IndexingComparator<T>(this);
+    }
 }

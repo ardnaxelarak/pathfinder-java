@@ -1,58 +1,93 @@
 package pathfinder.gui.dialog;
 
-import pathfinder.Character;
+/* local package imports */
 import pathfinder.Indexer;
 import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
+import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.DoubleMappedTextColumn;
 import pathfinder.gui.dialog.column.MappedFillColumn;
 import pathfinder.gui.dialog.column.MappedTextColumn;
+import pathfinder.gui.dialog.column.ObjectColumnCollection;
+import pathfinder.mapping.ConstantMapper;
 import pathfinder.mapping.IdentityMapper;
-import pathfinder.mapping.IndexingMapper;
-import pathfinder.mapping.NameMapper;
+import pathfinder.mapping.Mapper;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-public class CharacterSelectionDialog extends SelectionDialog
+public class ObjectSelectionDialog<T> extends SelectionDialog
 {
-    private Character[] characters;
+    private ArrayList<T> objects;
     private boolean[] selected;
     private boolean multiple;
     private char[] charIndex;
     private boolean finished;
-    private IndexingComparator<Character> mc;
-    private Indexer<Character> indexer;
+    private IndexingComparator<T> ic;
+    private Indexer<T> indexer;
     private DisplayPanel dp;
-    private MappedTextColumn<Character> nameColumn, idColumn;
-    private DoubleMappedTextColumn<String, Character> selectedColumn;
-    private MappedFillColumn<Character> borderColumn;
+    private DoubleMappedTextColumn<String, T> selectedColumn;
+    private ObjectColumnCollection<T> columnList;
 
-    public CharacterSelectionDialog(Frame owner, IndexingComparator<Character> mc, Indexer<Character> indexer)
+    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Mapper<T, Color> backColorMapper, List<Mapper<T, String>> textMappers)
     {
         super(owner);
-        this.mc = mc;
         this.indexer = indexer;
-        nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, new NameMapper(), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
+        this.ic = new IndexingComparator<T>(indexer);
+        int cols = textMappers.size();
 
-        idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, new IndexingMapper<Character>(indexer), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
+        MappedTextColumn<T> idColumn;
+        MappedFillColumn<T> borderColumn;
+
+        columnList = new ObjectColumnCollection<T>();
+
+        idColumn = new MappedTextColumn<T>(Resources.FONT_MONO_12, indexer.getMapper(), 4, 2, backColorMapper, Color.black);
         idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
-        selectedColumn = new DoubleMappedTextColumn<String, Character>(Resources.FONT_MONO_12, new IdentityMapper<String>(), 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
+        selectedColumn = new DoubleMappedTextColumn<String, T>(Resources.FONT_MONO_12, new IdentityMapper<String>(), 4, 2, backColorMapper, Color.black);
         selectedColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
-        borderColumn = new MappedFillColumn<Character>(4, Resources.BACK_COLOR_MAPPER);
-        dp = new DisplayPanel(Resources.BORDER_5, borderColumn, idColumn, selectedColumn, nameColumn, borderColumn, Resources.BORDER_5);
+        borderColumn = new MappedFillColumn<T>(4, backColorMapper);
+
+        columnList.add(idColumn);
+        columnList.add(borderColumn);
+
+        DialogColumn[] list = new DialogColumn[6 + cols];
+
+        int k = 0;
+        list[k++] = Resources.BORDER_5;
+        list[k++] = borderColumn;
+        list[k++] = idColumn;
+        list[k++] = selectedColumn;
+        for (Mapper<T, String> mapper : textMappers)
+        {
+            MappedTextColumn<T> cur = new MappedTextColumn<T>(Resources.FONT_12, mapper, 4, 2, backColorMapper, Color.black);
+            columnList.add(cur);
+            list[k++] = cur;
+        }
+        list[k++] = borderColumn;
+        list[k++] = Resources.BORDER_5;
+
+        dp = new DisplayPanel(list);
 
         getContentPane().add(dp);
     }
 
-    public Character showSingleSelectionDialog(Collection<Character> list)
+    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Color backColor, List<Mapper<T, String>> textMappers)
+    {
+        this(owner, indexer, new ConstantMapper<T, Color>(backColor), textMappers);
+    }
+
+    public T showSingleSelectionDialog(Collection<T> list)
     {
         if (list.isEmpty())
             return null;
@@ -61,15 +96,15 @@ public class CharacterSelectionDialog extends SelectionDialog
         showDialog();
         if (finished)
         {
-            int num = characters.length;
+            int num = objects.size();
             for (int i = 0; i < num; i++)
                 if (selected[i])
-                    return characters[i];
+                    return objects.get(i);
         }
         return null;
     }
 
-    public Character[] showMultipleSelectionDialog(Collection<Character> list)
+    public List<T> showMultipleSelectionDialog(Collection<T> list)
     {
         if (list.isEmpty())
             return null;
@@ -78,16 +113,11 @@ public class CharacterSelectionDialog extends SelectionDialog
         showDialog();
         if (finished)
         {
-            int num = characters.length;
-            int count = 0;
+            int num = objects.size();
+            LinkedList<T> ret = new LinkedList<T>();
             for (int i = 0; i < num; i++)
                 if (selected[i])
-                    count++;
-            int k = 0;
-            Character[] ret = new Character[count];
-            for (int i = 0; i < num; i++)
-                if (selected[i])
-                    ret[k++] = characters[i];
+                    ret.add(objects.get(i));
             return ret;
         }
         else
@@ -96,28 +126,26 @@ public class CharacterSelectionDialog extends SelectionDialog
         }
     }
 
-    public void setup(Collection<Character> list)
+    public void setup(Collection<T> list)
     {
         int num = list.size();
-        characters = new Character[num];
-        characters = list.toArray(characters);
-        Arrays.sort(characters, mc);
+        objects = new ArrayList<T>(num);
+        objects.addAll(list);
+        Collections.sort(objects, ic);
 
         dp.setNumRows(num);
         charIndex = new char[num];
 
         for (int i = 0; i < num; i++)
         {
-            Character c = characters[i];
+            T c = objects.get(i);
             selectedColumn.setObject1(i, "-");
             selectedColumn.setObject2(i, c);
-            idColumn.setObject(i, c);
-            borderColumn.setObject(i, c);
-            nameColumn.setObject(i, c);
+            columnList.setObject(i, c);
             charIndex[i] = indexer.getChar(c);
         }
 
-        selected = new boolean[characters.length];
+        selected = new boolean[num];
         finished = false;
         dp.update();
     }

@@ -1,7 +1,6 @@
 package pathfinder.gui.dialog.column;
 
 import pathfinder.gui.dialog.FontMetricsFetcher;
-import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.FillColumn;
 import pathfinder.gui.dialog.column.RowData;
 import pathfinder.mapping.ConstantMapper;
@@ -11,7 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-public class MappedFillColumn<T> implements DialogColumn
+public class MappedFillColumn<T> implements ObjectColumn<T>
 {
     private FillColumn base;
     private ArrayList<T> list;
