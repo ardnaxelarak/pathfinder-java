@@ -1,5 +1,8 @@
 package pathfinder;
 
+/* local package imports */
+import pathfinder.SkillSet;
+
 /* java package imports */
 import java.net.URI;
 import java.sql.ResultSet;
@@ -17,8 +20,9 @@ public final class CharacterTemplate implements Comparable<CharacterTemplate>
 	private final URI url;
 	private final boolean ferocity;
 	private final double cr;
+    private final SkillSet ss;
 
-	public CharacterTemplate(ResultSet set) throws SQLException
+	public CharacterTemplate(ResultSet set, SkillSet ss) throws SQLException
 	{
 		set.next();
 		id = set.getInt("id");
@@ -59,6 +63,7 @@ public final class CharacterTemplate implements Comparable<CharacterTemplate>
 			url = URI.create(urlString);
 		else
 			url = null;
+        this.ss = ss;
 	}
 
 	/* accessor methods */
@@ -231,6 +236,11 @@ public final class CharacterTemplate implements Comparable<CharacterTemplate>
 	{
 		return url;
 	}
+
+    public SkillSet getSkillSet()
+    {
+        return ss;
+    }
 
 	/* implementation of Comparable<CharacterTemplate> */
 	@Override

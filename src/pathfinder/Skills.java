@@ -62,7 +62,11 @@ public class Skills extends Indexer<Skill>
 
     public int getModifier(Skill skill, Character c)
     {
-        return c.getModifier(skill.getAbility());
+        Optional<Integer> skillModifier = c.getTemplate().getSkillSet().getModifier(skill);
+        if (skillModifier.isPresent())
+            return skillModifier.get();
+        else
+            return c.getModifier(skill.getAbility());
     }
 
     public Collection<Skill> getSkillList()

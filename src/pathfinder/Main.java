@@ -12,7 +12,7 @@ public class Main
 	{
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws SQLException
 	{
 		String url = "jdbc:mysql://localhost:3306/pathfinder_info";
 		String user = "ruby_user";

@@ -6,6 +6,7 @@ import pathfinder.CharacterTemplate;
 import pathfinder.Functions;
 import pathfinder.Group;
 import pathfinder.Skills;
+import pathfinder.SkillSet;
 
 /* java package imports */
 import java.sql.Connection;
@@ -21,6 +22,7 @@ public class MySQLConnection
 	private Connection con;
 	private Statement st;
 	private PreparedStatement charSelect, encSelect, partySelect;
+    private PreparedStatement c_skillSelect;
     private PreparedStatement encList, charList, skillsList;
 
 	public MySQLConnection(String url, String user, String password) throws SQLException
@@ -33,6 +35,7 @@ public class MySQLConnection
         encList = con.prepareStatement("SELECT e.id, e.name, e.acr FROM encounters e LEFT JOIN (SELECT * FROM marked_encounters WHERE campaign = ?) AS m ON e.id = m.encounter ORDER BY m.campaign DESC, e.name");
         charList = con.prepareStatement("SELECT c.id, c.name, c.cr FROM characters c LEFT JOIN (SELECT * FROM marked_characters WHERE campaign = ?) AS m ON c.id = m.creature ORDER BY m.campaign DESC, c.name");
         skillsList = con.prepareStatement("SELECT s.id, s.name, a.short_name, s.trained_only FROM skills s LEFT JOIN abilities a ON s.ability_mod = a.id");
+        c_skillSelect = con.prepareStatement("SELECT skill, modifier FROM c_skills WHERE cid = ?");
 	}
 
 	public ResultSet execute(String query) throws SQLException
@@ -57,9 +60,12 @@ public class MySQLConnection
 		ResultSet rs = null;
 		try
 		{
+            c_skillSelect.setInt(1, id);
+            rs = c_skillSelect.executeQuery();
+            SkillSet ss = new SkillSet(rs);
 			charSelect.setInt(1, id);
 			rs = charSelect.executeQuery();
-			CharacterTemplate c = new CharacterTemplate(rs);
+			CharacterTemplate c = new CharacterTemplate(rs, ss);
 			return c;
 		}
 		finally
