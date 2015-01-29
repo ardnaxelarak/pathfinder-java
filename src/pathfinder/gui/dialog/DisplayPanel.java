@@ -1,6 +1,6 @@
 package pathfinder.gui.dialog;
 
-import pathfinder.Functions;
+import pathfinder.Helper;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.RowData;
@@ -108,7 +108,7 @@ public class DisplayPanel extends JPanel implements FontMetricsFetcher
     {
         g.clearRect(0, 0, getWidth(), getHeight());
         Graphics2D g2 = (Graphics2D)g;
-        Functions.enableTAA(g);
+        Helper.enableTAA(g);
         int x = 0;
         int num = columns.length;
         for (int i = 0; i < num; i++)

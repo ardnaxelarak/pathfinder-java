@@ -1,5 +1,6 @@
 package pathfinder.gui.dialog.column;
 
+/* java package imports */
 import java.awt.Rectangle;
 
 public final class CellData

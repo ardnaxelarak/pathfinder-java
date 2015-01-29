@@ -1,10 +1,12 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.RowData;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;

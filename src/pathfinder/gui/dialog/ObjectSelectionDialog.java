@@ -2,7 +2,6 @@ package pathfinder.gui.dialog;
 
 /* local package imports */
 import pathfinder.Indexer;
-import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
@@ -11,9 +10,10 @@ import pathfinder.gui.dialog.column.DoubleMappedTextColumn;
 import pathfinder.gui.dialog.column.MappedFillColumn;
 import pathfinder.gui.dialog.column.MappedTextColumn;
 import pathfinder.gui.dialog.column.ObjectColumnCollection;
-import pathfinder.mapping.ConstantMapper;
-import pathfinder.mapping.IdentityMapper;
-import pathfinder.mapping.Mapper;
+
+/* guava package imports */
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /* java package imports */
 import java.awt.Color;
@@ -27,36 +27,35 @@ import java.util.List;
 
 public class ObjectSelectionDialog<T> extends SelectionDialog
 {
+    private static final Function<String, String> IDENT = Functions.identity();
     private ArrayList<T> objects;
     private boolean[] selected;
     private boolean multiple;
     private char[] charIndex;
     private boolean finished;
-    private IndexingComparator<T> ic;
     private Indexer<T> indexer;
     private DisplayPanel dp;
     private DoubleMappedTextColumn<String, T> selectedColumn;
     private ObjectColumnCollection<T> columnList;
 
-    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Mapper<T, Color> backColorMapper, List<Mapper<T, String>> textMappers)
+    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Function<? super T, Color> backColorFunction, List<? extends Function<? super T, String>> textFunctions)
     {
         super(owner);
         this.indexer = indexer;
-        this.ic = new IndexingComparator<T>(indexer);
-        int cols = textMappers.size();
+        int cols = textFunctions.size();
 
         MappedTextColumn<T> idColumn;
         MappedFillColumn<T> borderColumn;
 
         columnList = new ObjectColumnCollection<T>();
 
-        idColumn = new MappedTextColumn<T>(Resources.FONT_MONO_12, indexer.getMapper(), 4, 2, backColorMapper, Color.black);
+        idColumn = new MappedTextColumn<T>(Resources.FONT_MONO_12, indexer.INDEXING_FUNCTION, 4, 2, backColorFunction, Color.black);
         idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
-        selectedColumn = new DoubleMappedTextColumn<String, T>(Resources.FONT_MONO_12, new IdentityMapper<String>(), 4, 2, backColorMapper, Color.black);
+        selectedColumn = new DoubleMappedTextColumn<String, T>(Resources.FONT_MONO_12, IDENT, 4, 2, backColorFunction, Color.black);
         selectedColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
 
-        borderColumn = new MappedFillColumn<T>(4, backColorMapper);
+        borderColumn = new MappedFillColumn<T>(4, backColorFunction);
 
         columnList.add(idColumn);
         columnList.add(borderColumn);
@@ -68,9 +67,9 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         list[k++] = borderColumn;
         list[k++] = idColumn;
         list[k++] = selectedColumn;
-        for (Mapper<T, String> mapper : textMappers)
+        for (Function<? super T, String> function : textFunctions)
         {
-            MappedTextColumn<T> cur = new MappedTextColumn<T>(Resources.FONT_12, mapper, 4, 2, backColorMapper, Color.black);
+            MappedTextColumn<T> cur = new MappedTextColumn<T>(Resources.FONT_12, function, 4, 2, backColorFunction, Color.black);
             columnList.add(cur);
             list[k++] = cur;
         }
@@ -82,9 +81,9 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         getContentPane().add(dp);
     }
 
-    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Color backColor, List<Mapper<T, String>> textMappers)
+    public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Color backColor, List<? extends Function<? super T, String>> textFunctions)
     {
-        this(owner, indexer, new ConstantMapper<T, Color>(backColor), textMappers);
+        this(owner, indexer, Functions.constant(backColor), textFunctions);
     }
 
     public T showSingleSelectionDialog(Collection<T> list)
@@ -131,7 +130,7 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         int num = list.size();
         objects = new ArrayList<T>(num);
         objects.addAll(list);
-        Collections.sort(objects, ic);
+        Collections.sort(objects, indexer.INDEXING_COMPARATOR);
 
         dp.setNumRows(num);
         charIndex = new char[num];

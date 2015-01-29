@@ -1,8 +1,10 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.RowIterator;
 
+/* java package imports */
 import java.util.Iterator;
 
 public class RowData implements Iterable<CellData>

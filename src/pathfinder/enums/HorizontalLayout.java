@@ -2,7 +2,7 @@ package pathfinder.enums;
 
 public enum HorizontalLayout
 {
-	LEFT,
-	CENTER,
-	RIGHT;
+    LEFT,
+    CENTER,
+    RIGHT;
 }

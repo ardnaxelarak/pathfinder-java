@@ -2,8 +2,8 @@ package pathfinder.enums;
 
 public enum VerticalLayout
 {
-	TOP,
-	CENTER,
-	BASELINE,
-	BOTTOM;
+    TOP,
+    CENTER,
+    BASELINE,
+    BOTTOM;
 }

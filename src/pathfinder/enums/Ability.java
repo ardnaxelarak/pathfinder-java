@@ -2,7 +2,7 @@ package pathfinder.enums;
 
 public enum Ability
 {
-	STR ("Strength"),
+    STR ("Strength"),
     DEX ("Dexterity"),
     CON ("Constitution"),
     INT ("Intelligence"),
@@ -10,12 +10,12 @@ public enum Ability
     CHA ("Charisma"),
     ERROR ("Error");
 
-	private final String name;
+    private final String name;
 
-	Ability(String name)
-	{
+    Ability(String name)
+    {
         this.name = name;
-	}
+    }
 
     public String getName()
     {

@@ -3,7 +3,7 @@ grammar EncounterModifier;
 package pathfinder.parsing;
 
 import pathfinder.Encounter;
-import pathfinder.Functions;
+import pathfinder.Helper;
 }
 
 commands
@@ -15,7 +15,7 @@ commands
 command
 	[Encounter enc]
 :
-	'add' 'encounter' INT {$enc.addGroup(Functions.getEncounter($INT.int));}
+	'add' 'encounter' INT {$enc.addGroup(Helper.getEncounter($INT.int));}
 ;
 
 INT  : [0-9]+ ;

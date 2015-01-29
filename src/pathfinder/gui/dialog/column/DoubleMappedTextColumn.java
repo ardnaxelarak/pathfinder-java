@@ -1,13 +1,17 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.BasicTextColumn;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.RowData;
-import pathfinder.mapping.ConstantMapper;
-import pathfinder.mapping.Mapper;
 
+/* guava package imports */
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
+/* java package imports */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -18,25 +22,25 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
     private BasicTextColumn base;
     private ArrayList<T1> list1;
     private ArrayList<T2> list2;
-    private Mapper<T1, String> textMapper;
-    private Mapper<T2, Color> backColorMapper;
-    private Mapper<T2, Color> foreColorMapper;
+    private Function<? super T1, String> textFunction;
+    private Function<? super T2, Color> backColorFunction;
+    private Function<? super T2, Color> foreColorFunction;
     private boolean updateOnPaint;
 
-    public DoubleMappedTextColumn(Font font, Mapper<T1, String> textMapper, int xGap, int yGap, Mapper<T2, Color> backColorMapper, Mapper<T2, Color> foreColorMapper)
+    public DoubleMappedTextColumn(Font font, Function<? super T1, String> textFunction, int xGap, int yGap, Function<? super T2, Color> backColorFunction, Function<? super T2, Color> foreColorFunction)
     {
         this.base = new BasicTextColumn(font, xGap, yGap);
-        this.textMapper = textMapper;
-        this.backColorMapper = backColorMapper;
-        this.foreColorMapper = foreColorMapper;
+        this.textFunction = textFunction;
+        this.backColorFunction = backColorFunction;
+        this.foreColorFunction = foreColorFunction;
         this.list1 = new ArrayList<T1>();
         this.list2 = new ArrayList<T2>();
         this.updateOnPaint = false;
     }
 
-    public DoubleMappedTextColumn(Font font, Mapper<T1, String> textMapper, int xGap, int yGap, Mapper<T2, Color> backColorMapper, Color foreColor)
+    public DoubleMappedTextColumn(Font font, Function<? super T1, String> textFunction, int xGap, int yGap, Function<? super T2, Color> backColorFunction, Color foreColor)
     {
-        this(font, textMapper, xGap, yGap, backColorMapper, new ConstantMapper<T2, Color>(foreColor));
+        this(font, textFunction, xGap, yGap, backColorFunction, Functions.constant(foreColor));
     }
 
     public void setUpdateOnPaint(boolean value)
@@ -132,15 +136,15 @@ public class DoubleMappedTextColumn<T1, T2> implements DialogColumn
     {
         T1 t1 = list1.get(index);
 
-        base.setText(index, textMapper.getValue(t1));
+        base.setText(index, textFunction.apply(t1));
     }
 
     private void updateObject2(int index)
     {
         T2 t2 = list2.get(index);
 
-        base.setBackColor(index, backColorMapper.getValue(t2));
-        base.setForeColor(index, foreColorMapper.getValue(t2));
+        base.setBackColor(index, backColorFunction.apply(t2));
+        base.setForeColor(index, foreColorFunction.apply(t2));
     }
 
     public void updateObjects()

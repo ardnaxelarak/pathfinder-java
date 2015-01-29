@@ -1,9 +1,10 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.gui.dialog.column.CellData;
 
+/* java package imports */
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class RowIterator implements Iterator<CellData>
 {
@@ -39,7 +40,7 @@ public class RowIterator implements Iterator<CellData>
         }
         else
         {
-            throw new NoSuchElementException();
+            throw new java.util.NoSuchElementException();
         }
     }
 

@@ -1,28 +1,30 @@
 package pathfinder.gui.dialog;
 
+/* local package imports */
 import pathfinder.Character;
-import pathfinder.Functions;
-import pathfinder.comps.IndexingComparator;
+import pathfinder.Helper;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.column.ArrowColumn;
 import pathfinder.gui.dialog.column.MappedTextColumn;
 import pathfinder.gui.dialog.column.TextColumn;
-import pathfinder.mapping.Mapper;
 
+/* guava package imports */
+import com.google.common.base.Function;
+
+/* java package imports */
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class InitiativeDialog extends SelectionDialog
 {
-	private static final Mapper<Character, String> nameInitiativeMapper = new Mapper<Character, String>()
+	private static final Function<Character, String> nameInitiativeFunction = new Function<Character, String>()
 	{
-		public String getValue(Character c)
+		public String apply(Character c)
 		{
-			return String.format("%s (%s)", c.getName(), Functions.modifierString(c.getInitiativeModifier()));
+			return String.format("%s (%s)", c.getName(), Helper.modifierString(c.getInitiativeModifier()));
 		}
 	};
 
@@ -31,20 +33,18 @@ public class InitiativeDialog extends SelectionDialog
 	private boolean[] filled;
 	private int index;
 	private boolean finished;
-	private IndexingComparator<Character> mc;
 	private DisplayPanel dp;
 	private ArrowColumn arrowColumn;
 	private TextColumn rollColumn;
 	private MappedTextColumn<Character> nameColumn;
 
-	public InitiativeDialog(Frame owner, IndexingComparator<Character> mc)
+	public InitiativeDialog(Frame owner)
 	{
 		super(owner);
-		this.mc = mc;
 		arrowColumn = new ArrowColumn(5, Color.black);
 		rollColumn = new TextColumn(Resources.FONT_12, 4, 2, Color.white, Color.black);
 		rollColumn.setFixedWidth(35);
-		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, nameInitiativeMapper, 4, 2, Resources.BACK_COLOR_MAPPER, Color.black);
+		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, nameInitiativeFunction, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
 		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, rollColumn, Resources.BORDER_5, nameColumn, Resources.BORDER_5);
 		getContentPane().add(dp);
 	}
@@ -56,7 +56,6 @@ public class InitiativeDialog extends SelectionDialog
 		int num = list.size();
 		characters = new Character[num];
 		characters = list.toArray(characters);
-		Arrays.sort(characters, mc);
 
 		dp.setNumRows(num);
 		for (int i = 0; i < num; i++)

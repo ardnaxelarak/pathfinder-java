@@ -1,12 +1,14 @@
 package pathfinder.gui.dialog.column;
 
-import pathfinder.Functions;
+/* local package imports */
+import pathfinder.Helper;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.RowData;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -127,7 +129,7 @@ public class BasicTextColumn implements DialogColumn
             g.fill(rect);
             g.setColor(foreColors[i]);
             rect.grow(-xGap, -yGap);
-            Functions.drawAlignedString(g, fm, texts[i], rect, layout);
+            Helper.drawAlignedString(g, fm, texts[i], rect, layout);
         }
     }
 }

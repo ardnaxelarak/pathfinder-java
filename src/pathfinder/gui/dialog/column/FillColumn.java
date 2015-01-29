@@ -1,9 +1,11 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.gui.dialog.column.BasicColumn;
 import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.RowData;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Graphics2D;
 

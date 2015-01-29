@@ -1,13 +1,17 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.BasicTextColumn;
 import pathfinder.gui.dialog.column.ObjectColumn;
 import pathfinder.gui.dialog.column.RowData;
-import pathfinder.mapping.ConstantMapper;
-import pathfinder.mapping.Mapper;
 
+/* guava package imports */
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
+/* java package imports */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -17,29 +21,29 @@ public class MappedTextColumn<T> implements ObjectColumn<T>
 {
     private BasicTextColumn base;
     private ArrayList<T> list;
-    private Mapper<T, String> textMapper;
-    private Mapper<T, Color> backColorMapper;
-    private Mapper<T, Color> foreColorMapper;
+    private Function<? super T, String> textFunction;
+    private Function<? super T, Color> backColorFunction;
+    private Function<? super T, Color> foreColorFunction;
     private boolean updateOnPaint;
 
-    public MappedTextColumn(Font font, Mapper<T, String> textMapper, int xGap, int yGap, Mapper<T, Color> backColorMapper, Mapper<T, Color> foreColorMapper)
+    public MappedTextColumn(Font font, Function<? super T, String> textFunction, int xGap, int yGap, Function<? super T, Color> backColorFunction, Function<? super T, Color> foreColorFunction)
     {
         base = new BasicTextColumn(font, xGap, yGap);
-        this.textMapper = textMapper;
-        this.backColorMapper = backColorMapper;
-        this.foreColorMapper = foreColorMapper;
+        this.textFunction = textFunction;
+        this.backColorFunction = backColorFunction;
+        this.foreColorFunction = foreColorFunction;
         this.list = new ArrayList<T>();
         this.updateOnPaint = false;
     }
 
-    public MappedTextColumn(Font font, Mapper<T, String> textMapper, int xGap, int yGap, Mapper<T, Color> backColorMapper, Color foreColor)
+    public MappedTextColumn(Font font, Function<? super T, String> textFunction, int xGap, int yGap, Function<? super T, Color> backColorFunction, Color foreColor)
     {
-        this(font, textMapper, xGap, yGap, backColorMapper, new ConstantMapper<T, Color>(foreColor));
+        this(font, textFunction, xGap, yGap, backColorFunction, Functions.constant(foreColor));
     }
 
-    public MappedTextColumn(Font font, Mapper<T, String> textMapper, int xGap, int yGap, Color backColor, Color foreColor)
+    public MappedTextColumn(Font font, Function<? super T, String> textFunction, int xGap, int yGap, Color backColor, Color foreColor)
     {
-        this(font, textMapper, xGap, yGap, new ConstantMapper<T, Color>(backColor), new ConstantMapper<T, Color>(foreColor));
+        this(font, textFunction, xGap, yGap, Functions.constant(backColor), Functions.constant(foreColor));
     }
 
     public void setUpdateOnPaint(boolean value)
@@ -120,9 +124,9 @@ public class MappedTextColumn<T> implements ObjectColumn<T>
     {
         T t = list.get(index);
 
-        base.setText(index, textMapper.getValue(t));
-        base.setBackColor(index, backColorMapper.getValue(t));
-        base.setForeColor(index, foreColorMapper.getValue(t));
+        base.setText(index, textFunction.apply(t));
+        base.setBackColor(index, backColorFunction.apply(t));
+        base.setForeColor(index, foreColorFunction.apply(t));
     }
 
     public void updateObjects()

@@ -7,11 +7,46 @@ import pathfinder.enums.Status;
 import pathfinder.event.CharacterListener;
 import pathfinder.event.DamageEvent;
 
+/* guava package imports */
+import com.google.common.base.Function;
+
 /* java package imports */
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class Character
 {
+    public static final Function<Character, String> NAME_FUNCTION = new Function<Character, String>()
+    {
+        public String apply(Character c)
+        {
+            return c.getName();
+        }
+    };
+
+    public static final Comparator<Character> INITIATIVE_COMPARATOR = new Comparator<Character>()
+    {
+        public int compare(Character c1, Character c2)
+        {
+            if (c1 == c2)
+                return 0;
+            else if (c1.getInitiativeRoll() < c2.getInitiativeRoll())
+                return 1;
+            else if (c1.getInitiativeRoll() > c2.getInitiativeRoll())
+                return -1;
+            else if (c1.getInitiativeModifier() < c2.getInitiativeModifier())
+                return 1;
+            else if (c1.getInitiativeModifier() > c2.getInitiativeModifier())
+                return -1;
+            else if (c1.getRandomModifier() < c2.getRandomModifier())
+                return 1;
+            else if (c1.getRandomModifier() > c2.getRandomModifier())
+                return -1;
+            else
+                return 0;
+        }
+    };
+
     private CharacterTemplate template;
     private int maxHP, damage, initiativeRoll;
     private double randomModifier;
@@ -30,7 +65,7 @@ public class Character
     public Character(CharacterTemplate template, String name)
     {
         this.template = template;
-        maxHP = Functions.roll(template.getHP());
+        maxHP = Helper.roll(template.getHP());
         damage = 0;
         regenBlocked = false;
         status = Status.NORMAL;
@@ -39,7 +74,7 @@ public class Character
         this.name = name;
         this.isPC = false;
         initiativeRoll = Integer.MIN_VALUE;
-        randomModifier = Functions.random();
+        randomModifier = Helper.random();
         listeners = new LinkedList<CharacterListener>();
     }
 
@@ -78,7 +113,7 @@ public class Character
 
     public void rollInitiative()
     {
-        setInitiativeRoll(Functions.roll() + template.getInitiativeModifier());
+        setInitiativeRoll(Helper.roll() + template.getInitiativeModifier());
     }
 
     public void addCondition(Condition cond)
@@ -122,7 +157,7 @@ public class Character
     {
         if (status != Status.DYING)
             return false;
-        int value = Functions.roll();
+        int value = Helper.roll();
         if (value == 20)
         {
             stabalize();
@@ -152,37 +187,37 @@ public class Character
             amount -= template.getDR();
             if (amount < 0)
                 amount = 0;
-            Functions.log("DR reduces damage to %d.", amount);
+            Helper.log("DR reduces damage to %d.", amount);
             if (amount == 0)
                 return;
         }
         if (template.getRegeneration() > 0 && suppressRegen && !regenBlocked)
         {
             regenBlocked = true;
-            Functions.log("Regeneration is suppressed for %s", name);
+            Helper.log("Regeneration is suppressed for %s", name);
         }
         if (getCurrentHP() - amount <= -template.getCON() && (template.getRegeneration() <= 0 || regenBlocked))
         {
             kill();
-            Functions.log("%s is dead", name);
+            Helper.log("%s is dead", name);
         }
         else if (getCurrentHP() >= 0 && getCurrentHP() < amount)
         {
             if (template.hasFerocity())
             {
                 // addCondition(staggered);
-                Functions.log("%s is at negative hitpoints and staggered", name);
+                Helper.log("%s is at negative hitpoints and staggered", name);
             }
             else
             {
                 startDying();
-                Functions.log("%s is dying", name);
+                Helper.log("%s is dying", name);
             }
         }
         else if (getCurrentHP() == amount)
         {
             disable();
-            Functions.log("%s is disabled", name);
+            Helper.log("%s is disabled", name);
         }
         damage += amount;
         DamageEvent e = new DamageEvent(this, amount);
@@ -197,7 +232,7 @@ public class Character
         if (amount <= 0)
             return;
         damage -= amount;
-        Functions.log("%s heals %d", name, amount);
+        Helper.log("%s heals %d", name, amount);
         DamageEvent e = new DamageEvent(this, -amount);
         for (CharacterListener cl : listeners)
             cl.characterDamaged(e);
@@ -205,7 +240,7 @@ public class Character
 
     public void heal(String amount)
     {
-        int num = Functions.roll(amount);
+        int num = Helper.roll(amount);
         heal(num);
     }
 
@@ -218,7 +253,7 @@ public class Character
         if (regenBlocked)
         {
             regenBlocked = false;
-            Functions.log("%s resumes regeneration", name);
+            Helper.log("%s resumes regeneration", name);
         }
         else if (template.getRegeneration() > 0)
         {
@@ -297,7 +332,7 @@ public class Character
     public void setInitiativeRoll(int roll)
     {
         initiativeRoll = roll;
-        randomModifier = Functions.random();
+        randomModifier = Helper.random();
         for (CharacterListener cl : listeners)
             cl.initiativeModified(this);
     }

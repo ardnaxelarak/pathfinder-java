@@ -17,8 +17,8 @@ public class Skills extends Indexer<Skill>
 {
     private TreeMap<Integer, Skill> list;
 
-	public Skills(ResultSet set) throws SQLException
-	{
+    public Skills(ResultSet set) throws SQLException
+    {
         list = new TreeMap<Integer, Skill>();
         int id;
         String name;
@@ -34,7 +34,7 @@ public class Skills extends Indexer<Skill>
             current = new Skill(id, name, ability, trained);
             list.put(id, current);
         }
-	}
+    }
 
     public Optional<Skill> get(int id)
     {

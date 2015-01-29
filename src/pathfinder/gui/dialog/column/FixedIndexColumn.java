@@ -1,14 +1,18 @@
 package pathfinder.gui.dialog.column;
 
-import pathfinder.Functions;
+/* local package imports */
+import pathfinder.Helper;
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.CellData;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.RowData;
-import pathfinder.mapping.ConstantMapper;
-import pathfinder.mapping.Mapper;
 
+/* guava package imports */
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
+/* java package imports */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -24,14 +28,14 @@ public class FixedIndexColumn<T> implements DialogColumn
     private Font font;
     private FontMetrics fm;
     private int xGap, yGap;
-    private Mapper<T, Color> backColorMapper, foreColorMapper;
+    private Function<? super T, Color> backColorFunction, foreColorFunction;
     private Color[] backColors;
     private Color[] foreColors;
     private TextLayout layout;
     private int width, num;
     private boolean updateOnPaint, updateOnAdd;
 
-    public FixedIndexColumn(Font font, int xGap, int yGap, Mapper<T, Color> backColorMapper, Mapper<T, Color> foreColorMapper)
+    public FixedIndexColumn(Font font, int xGap, int yGap, Function<? super T, Color> backColorFunction, Function<? super T, Color> foreColorFunction)
     {
         this.font = font;
         this.fm = null;
@@ -40,22 +44,22 @@ public class FixedIndexColumn<T> implements DialogColumn
         this.width = -1;
         this.backColors = new Color[0];
         this.foreColors = new Color[0];
-        this.backColorMapper = backColorMapper;
-        this.foreColorMapper = foreColorMapper;
+        this.backColorFunction = backColorFunction;
+        this.foreColorFunction = foreColorFunction;
         this.layout = TextLayout.CENTER_LEFT;
         this.list = new ArrayList<T>();
         this.updateOnPaint = false;
         this.updateOnAdd = false;
     }
 
-    public FixedIndexColumn(Font font, int xGap, int yGap, Mapper<T, Color> backColorMapper, Color foreColor)
+    public FixedIndexColumn(Font font, int xGap, int yGap, Function<? super T, Color> backColorFunction, Color foreColor)
     {
-        this(font, xGap, yGap, backColorMapper, new ConstantMapper<T, Color>(foreColor));
+        this(font, xGap, yGap, backColorFunction, Functions.constant(foreColor));
     }
 
     public static FixedIndexColumn<NullType> singleColor(Font font, int xGap, int yGap, Color backColor, Color foreColor)
     {
-        FixedIndexColumn<NullType> ret = new FixedIndexColumn<NullType>(font, xGap, yGap, new ConstantMapper<NullType, Color>(backColor), new ConstantMapper<NullType, Color>(foreColor));
+        FixedIndexColumn<NullType> ret = new FixedIndexColumn<NullType>(font, xGap, yGap, Functions.constant(backColor), Functions.constant(foreColor));
         ret.updateOnAdd = true;
         return ret;
     }
@@ -158,8 +162,8 @@ public class FixedIndexColumn<T> implements DialogColumn
     {
         T t = list.get(index);
 
-        backColors[index] = backColorMapper.getValue(t);
-        foreColors[index] = foreColorMapper.getValue(t);
+        backColors[index] = backColorFunction.apply(t);
+        foreColors[index] = foreColorFunction.apply(t);
     }
 
     public void updateObjects()
@@ -183,7 +187,7 @@ public class FixedIndexColumn<T> implements DialogColumn
             g.fill(rect);
             g.setColor(foreColors[i]);
             rect.grow(-xGap, -yGap);
-            Functions.drawAlignedString(g, fm, c + "", rect, layout);
+            Helper.drawAlignedString(g, fm, c + "", rect, layout);
             if (c == 'z')
                 c = 'A';
             else

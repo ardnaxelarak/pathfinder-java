@@ -2,7 +2,7 @@ package pathfinder.enums;
 
 public enum DialogType
 {
-	RENAME,
-	HEALING,
-	DAMAGE;
+    RENAME,
+    HEALING,
+    DAMAGE;
 }

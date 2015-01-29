@@ -1,5 +1,6 @@
 package pathfinder.gui.dialog;
 
+/* local package imports */
 import pathfinder.Character;
 import pathfinder.Indexer;
 import pathfinder.Skill;
@@ -10,13 +11,13 @@ import pathfinder.gui.dialog.CharacterTextDialog;
 import pathfinder.gui.dialog.InitiativeDialog;
 import pathfinder.gui.dialog.ObjectSelectionDialog;
 import pathfinder.gui.dialog.SQLRowSelectionDialog;
-import pathfinder.mapping.Mapper;
-import pathfinder.mapping.NameMapper;
-import pathfinder.mapping.ToStringMapper;
-import pathfinder.sql.FloatSQLColumn;
+import pathfinder.sql.DataColumns;
 import pathfinder.sql.MySQLConnection;
-import pathfinder.sql.StringSQLColumn;
 
+/* guava package imports */
+import com.google.common.base.Functions;
+
+/* java package imports */
 import java.awt.Frame;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -37,13 +38,13 @@ public class DialogHandler
 
     public DialogHandler(Frame parent, Indexer<Character> indexer, MySQLConnection conn, int campaignID, Skills skills)
     {
-        initDialog = new InitiativeDialog(parent, indexer.getComparator());
-        charSelectDialog = new ObjectSelectionDialog<Character>(parent, indexer, Resources.BACK_COLOR_MAPPER, Collections.singletonList((Mapper<Character, String>)new NameMapper()));
-        skillSelectDialog = new ObjectSelectionDialog<Skill>(parent, skills, Resources.PC_COLOR, Collections.singletonList((Mapper<Skill, String>)new ToStringMapper<Skill>()));
-        orderDialog = new CharacterOrderingDialog(parent, indexer.getComparator(), indexer);
-        textDialog = new CharacterTextDialog(parent, indexer.getComparator(), indexer);
-        encDialog = new SQLRowSelectionDialog(parent, "id", new StringSQLColumn("name"), new FloatSQLColumn("acr"));
-        charDialog = new SQLRowSelectionDialog(parent, "id", new StringSQLColumn("name"), new FloatSQLColumn("cr"));
+        initDialog = new InitiativeDialog(parent);
+        charSelectDialog = new ObjectSelectionDialog<Character>(parent, indexer, Resources.BACK_COLOR_FUNCTION, Collections.singletonList(Character.NAME_FUNCTION));
+        skillSelectDialog = new ObjectSelectionDialog<Skill>(parent, skills, Resources.PC_COLOR, Collections.singletonList(Functions.toStringFunction()));
+        orderDialog = new CharacterOrderingDialog(parent, indexer);
+        textDialog = new CharacterTextDialog(parent, indexer);
+        encDialog = new SQLRowSelectionDialog(parent, "id", DataColumns.stringColumn("name"), DataColumns.floatColumn("acr"));
+        charDialog = new SQLRowSelectionDialog(parent, "id", DataColumns.stringColumn("name"), DataColumns.floatColumn("cr"));
         
         this.conn = conn;
         this.campaignID = campaignID;

@@ -1,13 +1,15 @@
 package pathfinder.gui.dialog;
 
+/* local package imports */
 import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
 import pathfinder.gui.dialog.column.DialogColumn;
 import pathfinder.gui.dialog.column.FixedIndexColumn;
 import pathfinder.gui.dialog.column.TextColumn;
-import pathfinder.sql.SQLDataColumn;
+import pathfinder.sql.DataColumn;
 
+/* java package imports */
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
@@ -15,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+/* javax package imports */
 import javax.lang.model.type.NullType;
 
 public class SQLRowSelectionDialog extends SelectionDialog
@@ -28,9 +31,9 @@ public class SQLRowSelectionDialog extends SelectionDialog
     private FixedIndexColumn<NullType> indexColumn;
     private TextColumn selectedColumn;
     private TextColumn[] dataColumns;
-    private SQLDataColumn[] dataFetchers;
+    private DataColumn[] dataFetchers;
 
-    public SQLRowSelectionDialog(Frame owner, String idName, SQLDataColumn... columns)
+    public SQLRowSelectionDialog(Frame owner, String idName, DataColumn... columns)
     {
         super(owner);
         Color backColor = Resources.PC_COLOR;

@@ -5,11 +5,10 @@ import pathfinder.ArrayIndexer;
 import pathfinder.Character;
 import pathfinder.CharacterTemplate;
 import pathfinder.Encounter;
-import pathfinder.Functions;
 import pathfinder.Group;
+import pathfinder.Helper;
 import pathfinder.Skill;
 import pathfinder.Skills;
-import pathfinder.comps.IndexingComparator;
 import pathfinder.enums.InputStatus;
 import pathfinder.event.CharacterListener;
 import pathfinder.event.DamageEvent;
@@ -28,7 +27,6 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
@@ -52,7 +50,6 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
     private JTextArea messages;
     private JLabel roundCounter;
     private DialogHandler dh;
-    private IndexingComparator<Character> mc;
     private Timer timer;
     private TimerLabel timerLabel;
     private Skills skills;
@@ -77,12 +74,11 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         setBackground(Color.white);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        characters = new Encounter();
-        characters.addListener(this);
         indexer = new ArrayIndexer<Character>();
-        mc = new IndexingComparator<Character>(indexer);
+        characters = new Encounter(indexer);
+        characters.addListener(this);
 
-        skills = Functions.getSkills();
+        skills = Helper.getSkills();
 
         chdisp = new CharacterDisplay(characters);
         JScrollPane chPane = new JScrollPane(chdisp,
@@ -116,7 +112,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         left.add(messages, BorderLayout.PAGE_START);
         getContentPane().add(left, BorderLayout.CENTER);
 
-        dh = new DialogHandler(this, indexer, Functions.getConnection(), campaignID, skills);
+        dh = new DialogHandler(this, indexer, Helper.getConnection(), campaignID, skills);
 
         timer = new Timer(true);
         timerRunning = false;
@@ -298,7 +294,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             int charID = dh.showNewCharacterSelectionDialog();
             if (charID >= 0)
             {
-                CharacterTemplate ct = Functions.getTemplate(charID);
+                CharacterTemplate ct = Helper.getTemplate(charID);
                 if (ct != null)
                     addCharacter(new Character(ct));
             }
@@ -322,14 +318,13 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             break;
         case 'o':
             List<Character> party = characters.getPCs();
-            Collections.sort(party, mc);
             dh.showOrderingDialog(party);
             break;
         case 'E':
             int encID = dh.showEncounterSelectionDialog();
             if (encID >= 0)
             {
-                Group enc = Functions.getEncounter(encID);
+                Group enc = Helper.getEncounter(encID);
                 if (enc != null)
                     addGroup(enc);
             }
@@ -352,7 +347,7 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
                 sendMessage(s.getName());
                 for (Character chr : characters.getPCs())
                 {
-                    sendMessage("%s (%s)", chr, Functions.modifierString(skills.getModifier(s, chr)));
+                    sendMessage("%s (%s)", chr, Helper.modifierString(skills.getModifier(s, chr)));
                 }
             }
         }

@@ -1,11 +1,15 @@
 package pathfinder.gui.dialog.column;
 
+/* local package imports */
 import pathfinder.gui.dialog.FontMetricsFetcher;
 import pathfinder.gui.dialog.column.FillColumn;
 import pathfinder.gui.dialog.column.RowData;
-import pathfinder.mapping.ConstantMapper;
-import pathfinder.mapping.Mapper;
 
+/* guava package imports */
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
+/* java package imports */
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -14,20 +18,20 @@ public class MappedFillColumn<T> implements ObjectColumn<T>
 {
     private FillColumn base;
     private ArrayList<T> list;
-    private Mapper<T, Color> colorMapper;
+    private Function<? super T, Color> colorFunction;
     private boolean updateOnPaint;
 
-    public MappedFillColumn(int width, Mapper<T, Color> colorMapper)
+    public MappedFillColumn(int width, Function<? super T, Color> colorFunction)
     {
         base = new FillColumn(width);
-        this.colorMapper = colorMapper;
+        this.colorFunction = colorFunction;
         this.list = new ArrayList<T>();
         this.updateOnPaint = false;
     }
 
     public MappedFillColumn(int width, Color color)
     {
-        this(width, new ConstantMapper<T, Color>(color));
+        this(width, Functions.constant(color));
     }
 
     public void setUpdateOnPaint(boolean value)
@@ -88,7 +92,7 @@ public class MappedFillColumn<T> implements ObjectColumn<T>
     {
         T t = list.get(index);
 
-        base.setColor(index, colorMapper.getValue(t));
+        base.setColor(index, colorFunction.apply(t));
     }
 
     public void updateObjects()

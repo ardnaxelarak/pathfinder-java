@@ -15,8 +15,8 @@ public class SkillSet
 {
     private TreeMap<Integer, Integer> list;
 
-	public SkillSet(ResultSet set) throws SQLException
-	{
+    public SkillSet(ResultSet set) throws SQLException
+    {
         list = new TreeMap<Integer, Integer>();
         int skill, modifier;
         while (set.next())
@@ -25,7 +25,7 @@ public class SkillSet
             modifier = set.getInt("modifier");
             list.put(skill, modifier);
         }
-	}
+    }
 
     public Optional<Integer> getModifier(int skillnum)
     {
