@@ -1,8 +1,10 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.Helper;
 import pathfinder.gui.MainDisplay;
 
+/* java package imports */
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -26,18 +28,6 @@ public class Main
             e.printStackTrace();
         }
         MainDisplay md = new MainDisplay(1);
-        Group party = Helper.getParty(1);
-        if (party != null)
-        {
-            md.addGroup(party);
-        }
-        /*
-        Group enc = Helper.getEncounter(3);
-        if (enc != null)
-        {
-            md.addGroup(enc);
-        }
-        */
         Scanner sc = new Scanner(System.in);
         while (sc.hasNextLine())
         {

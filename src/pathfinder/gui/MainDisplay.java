@@ -17,6 +17,9 @@ import pathfinder.gui.CharacterDisplay;
 import pathfinder.gui.TimerLabel;
 import pathfinder.gui.dialog.DialogHandler;
 
+/* guava package imports */
+import com.google.common.base.Optional;
+
 /* java package imports */
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -122,6 +125,10 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
         setVisible(true);
         addKeyListener(this);
         instat = InputStatus.WAITING;
+
+        Optional<Group> party = Helper.getParty(campaignID);
+        if (party.isPresent())
+            addGroup(party.get());
     }
 
     private void refreshTask()
@@ -291,12 +298,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
                 resumeTimer();
             break;
         case 'c':
-            int charID = dh.showNewCharacterSelectionDialog();
-            if (charID >= 0)
+            Optional<Integer> charID = dh.showNewCharacterSelectionDialog();
+            if (charID.isPresent())
             {
-                CharacterTemplate ct = Helper.getTemplate(charID);
-                if (ct != null)
-                    addCharacter(new Character(ct));
+                Optional<CharacterTemplate> ct = Helper.getTemplate(charID.get());
+                if (ct.isPresent())
+                    addCharacter(new Character(ct.get()));
             }
             break;
         case 'd':
@@ -321,12 +328,12 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             dh.showOrderingDialog(party);
             break;
         case 'E':
-            int encID = dh.showEncounterSelectionDialog();
-            if (encID >= 0)
+            Optional<Integer> encID = dh.showEncounterSelectionDialog();
+            if (encID.isPresent())
             {
-                Group enc = Helper.getEncounter(encID);
-                if (enc != null)
-                    addGroup(enc);
+                Optional<Group> enc = Helper.getEncounter(encID.get());
+                if (enc.isPresent())
+                    addGroup(enc.get());
             }
             break;
         case 'N':
@@ -336,18 +343,18 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
             openPages();
             break;
         case 'R':
-            List<Character> list = dh.showMultipleSelectionDialog(characters.getCharacters());
-            if (list != null)
-                characters.removeAll(list);
+            Optional<? extends List<Character>> list = dh.showMultipleSelectionDialog(characters.getCharacters());
+            if (list.isPresent())
+                characters.removeAll(list.get());
             break;
         case 'S':
-            Skill s = dh.showSingleSkillSelectionDialog();
-            if (s != null)
+            Optional<Skill> s = dh.showSingleSkillSelectionDialog();
+            if (s.isPresent())
             {
-                sendMessage(s.getName());
+                sendMessage(s.get().getName());
                 for (Character chr : characters.getPCs())
                 {
-                    sendMessage("%s (%s)", chr, Helper.modifierString(skills.getModifier(s, chr)));
+                    sendMessage("%s (%s)", chr, Helper.modifierString(skills.getModifier(s.get(), chr)));
                 }
             }
         }

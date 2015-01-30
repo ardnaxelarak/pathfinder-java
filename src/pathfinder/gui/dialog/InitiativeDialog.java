@@ -2,15 +2,11 @@ package pathfinder.gui.dialog;
 
 /* local package imports */
 import pathfinder.Character;
-import pathfinder.Helper;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.ArrowColumn;
-import pathfinder.gui.dialog.column.MappedTextColumn;
-import pathfinder.gui.dialog.column.TextColumn;
 
 /* guava package imports */
-import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.Color;
@@ -20,140 +16,150 @@ import java.util.Collection;
 
 public class InitiativeDialog extends SelectionDialog
 {
-	private static final Function<Character, String> nameInitiativeFunction = new Function<Character, String>()
-	{
-		public String apply(Character c)
-		{
-			return String.format("%s (%s)", c.getName(), Helper.modifierString(c.getInitiativeModifier()));
-		}
-	};
+    private Character[] characters;
+    private int[] rolls;
+    private boolean[] filled;
+    private int index;
+    private boolean finished;
+    private DisplayPanel dp;
+    private final int ARROW_COL, ROLL_COL, NAME_COL;
+    private final InfoLoader loader = new InfoLoader()
+    {
+        public Optional<String> getText(int row, int column)
+        {
+            if (column == ROLL_COL && filled[row])
+                return Optional.of(Integer.toString(rolls[row]));
+            else if (column == ROLL_COL && !filled[row])
+                return Optional.absent();
+            else if (column == NAME_COL)
+                return Optional.of(characters[row].getName());
+            else
+                return Optional.absent();
+        }
 
-	private Character[] characters;
-	private int[] rolls;
-	private boolean[] filled;
-	private int index;
-	private boolean finished;
-	private DisplayPanel dp;
-	private ArrowColumn arrowColumn;
-	private TextColumn rollColumn;
-	private MappedTextColumn<Character> nameColumn;
+        public Optional<Color> getBackColor(int row, int column)
+        {
+            if (column == ARROW_COL)
+                return Optional.absent();
+            else if (column == ROLL_COL)
+                return Optional.of(Color.white);
+            else if (characters[row].isPC())
+                return Optional.of(Resources.PC_COLOR);
+            else
+                return Optional.of(Resources.NPC_COLOR);
+        }
 
-	public InitiativeDialog(Frame owner)
-	{
-		super(owner);
-		arrowColumn = new ArrowColumn(5, Color.black);
-		rollColumn = new TextColumn(Resources.FONT_12, 4, 2, Color.white, Color.black);
-		rollColumn.setFixedWidth(35);
-		nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, nameInitiativeFunction, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
-		dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, rollColumn, Resources.BORDER_5, nameColumn, Resources.BORDER_5);
-		getContentPane().add(dp);
-	}
+        public Optional<Color> getForeColor(int row, int column)
+        {
+            return Optional.of(Color.black);
+        }
+    };
 
-	public boolean showInitiativeDialog(Collection<Character> list)
-	{
-		if (list.isEmpty())
-			return false;
-		int num = list.size();
-		characters = new Character[num];
-		characters = list.toArray(characters);
+    public InitiativeDialog(Frame owner)
+    {
+        super(owner);
 
-		dp.setNumRows(num);
-		for (int i = 0; i < num; i++)
-		{
-			rollColumn.setObject(i, "");
-			nameColumn.setObject(i, characters[i]);
-		}
+        dp = new DisplayPanel(loader);
 
-		rolls = new int[characters.length];
-		filled = new boolean[characters.length];
-		setIndex(0);
-		finished = false;
-		dp.update();
-		showDialog();
-		return finished;
-	}
+        dp.addEmptyColumn(5);
+        ARROW_COL = dp.addArrowColumn(5, 0);
+        dp.addEmptyColumn(5);
+        ROLL_COL = dp.addTextColumn(Resources.COL_12, 35);
+        dp.addEmptyColumn(5);
+        NAME_COL = dp.addTextColumn(Resources.COL_12);
+        dp.addEmptyColumn(5);
 
-	private void advance()
-	{
-		int i;
-		for (i = (index + 1) % characters.length; i != index && filled[i]; i = (i + 1) % characters.length);
-		if (i == index)
-			finish();
-		else
-		{
-			setIndex(i);
-			dp.repaint();
-		}
-	}
+        getContentPane().add(dp);
+    }
 
-	private void finish()
-	{
-		for (int i = 0; i < characters.length; i++)
-		{
-			characters[i].setInitiativeRoll(rolls[i]);
-		}
-		finished = true;
-		close();
-	}
+    public boolean showInitiativeDialog(Collection<Character> list)
+    {
+        if (list.isEmpty())
+            return false;
+        int num = list.size();
+        characters = new Character[num];
+        characters = list.toArray(characters);
 
-	private void setIndex(int index)
-	{
-		this.index = index;
-		arrowColumn.setIndex(index);
-	}
+        rolls = new int[characters.length];
+        filled = new boolean[characters.length];
 
-	@Override
-	public void keyPressed(KeyEvent e)
-	{
-		switch (e.getKeyCode())
-		{
-		case KeyEvent.VK_ESCAPE:
-			close();
-			break;
-		case KeyEvent.VK_BACK_SPACE:
-			rolls[index] /= 10;
-			if (rolls[index] == 0)
-			{
-				filled[index] = false;
-				rollColumn.setObject(index, "");
-			}
-			else
-			{
-				rollColumn.setObject(index, String.format("%d", rolls[index]));
-			}
-			dp.repaint();
-			break;
-		case KeyEvent.VK_DOWN:
-			setIndex((index + 1) % characters.length);
-			dp.repaint();
-			break;
-		case KeyEvent.VK_UP:
-			setIndex((index + characters.length - 1) % characters.length);
-			dp.repaint();
-			break;
-		case KeyEvent.VK_ENTER:
-		case KeyEvent.VK_ACCEPT:
-			advance();
-			break;
+        dp.initializeValues(num);
+
+        setIndex(0);
+        finished = false;
+        showDialog();
+        return finished;
+    }
+
+    private void advance()
+    {
+        int i;
+        for (i = (index + 1) % characters.length; i != index && filled[i]; i = (i + 1) % characters.length);
+        if (i == index)
+            finish();
+        else
+            setIndex(i);
+    }
+
+    private void finish()
+    {
+        for (int i = 0; i < characters.length; i++)
+            characters[i].setInitiativeRoll(rolls[i]);
+
+        finished = true;
+        close();
+    }
+
+    private void setIndex(int index)
+    {
+        this.index = index;
+        dp.setCurrentRow(index);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
+        case KeyEvent.VK_ESCAPE:
+            close();
+            break;
+        case KeyEvent.VK_BACK_SPACE:
+            rolls[index] /= 10;
+            if (rolls[index] == 0)
+                filled[index] = false;
+            dp.updateValue(index, ROLL_COL);
+            break;
+        case KeyEvent.VK_DOWN:
+            setIndex((index + 1) % characters.length);
+            break;
+        case KeyEvent.VK_UP:
+            setIndex((index + characters.length - 1) % characters.length);
+            break;
+        case KeyEvent.VK_ENTER:
+        case KeyEvent.VK_ACCEPT:
+            advance();
+            break;
         case KeyEvent.VK_PAGE_DOWN:
             dp.nextPage();
             break;
         case KeyEvent.VK_PAGE_UP:
             dp.prevPage();
             break;
-		}
-	}
+        }
+    }
 
-	@Override
-	public void keyTyped(KeyEvent e)
-	{
-		char c = e.getKeyChar();
-		if (c >= '0' && c <= '9')
-		{
-			rolls[index] = rolls[index] * 10 + (c - '0');
-			rollColumn.setObject(index, String.format("%d", rolls[index]));
-			filled[index] = true;
-			dp.repaint();
-		}
-	}
+    @Override
+    public void keyTyped(KeyEvent e)
+    {
+        char c = e.getKeyChar();
+        if (c >= '0' && c <= '9')
+        {
+            rolls[index] = rolls[index] * 10 + (c - '0');
+            filled[index] = true;
+
+            dp.updateValue(index, ROLL_COL);
+            dp.repaint();
+        }
+    }
 }

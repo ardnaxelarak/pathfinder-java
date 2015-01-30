@@ -16,6 +16,7 @@ import pathfinder.sql.MySQLConnection;
 
 /* guava package imports */
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.Frame;
@@ -56,42 +57,42 @@ public class DialogHandler
         return initDialog.showInitiativeDialog(list);
     }
 
-    public Skill showSingleSkillSelectionDialog()
+    public Optional<Skill> showSingleSkillSelectionDialog()
     {
         return skillSelectDialog.showSingleSelectionDialog(skills.getSkillList());
     }
 
-    public Character showSingleSelectionDialog(Collection<Character> list)
+    public Optional<Character> showSingleSelectionDialog(Collection<Character> list)
     {
         return charSelectDialog.showSingleSelectionDialog(list);
     }
 
-    public List<Character> showMultipleSelectionDialog(Collection<Character> list)
+    public Optional<? extends List<Character>> showMultipleSelectionDialog(Collection<Character> list)
     {
         return charSelectDialog.showMultipleSelectionDialog(list);
     }
 
-    public Character[] showOrderingDialog(List<Character> list)
+    public Optional<Character[]> showOrderingDialog(List<Character> list)
     {
         return orderDialog.showOrderingDialog(list);
     }
 
-    public Character showRenameDialog(List<Character> list)
+    public Optional<Character> showRenameDialog(List<Character> list)
     {
         return textDialog.showRenameDialog(list);
     }
 
-    public Character showDamageDialog(List<Character> list)
+    public Optional<Character> showDamageDialog(List<Character> list)
     {
         return textDialog.showDamageDialog(list);
     }
 
-    public Character showHealingDialog(List<Character> list)
+    public Optional<Character> showHealingDialog(List<Character> list)
     {
         return textDialog.showHealingDialog(list);
     }
 
-    public int showEncounterSelectionDialog()
+    public Optional<Integer> showEncounterSelectionDialog()
     {
         try
         {
@@ -99,11 +100,12 @@ public class DialogHandler
         }
         catch (SQLException e)
         {
-            return -1;
+            e.printStackTrace();
+            return Optional.absent();
         }
     }
 
-    public int showNewCharacterSelectionDialog()
+    public Optional<Integer> showNewCharacterSelectionDialog()
     {
         try
         {
@@ -111,7 +113,8 @@ public class DialogHandler
         }
         catch (SQLException e)
         {
-            return -1;
+            e.printStackTrace();
+            return Optional.absent();
         }
     }
 }

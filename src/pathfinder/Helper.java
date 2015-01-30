@@ -1,5 +1,6 @@
 package pathfinder;
 
+/* local package imports */
 import pathfinder.Group;
 import pathfinder.enums.TextLayout;
 import pathfinder.parsing.DiceRollLexer;
@@ -8,6 +9,10 @@ import pathfinder.parsing.EncounterModifierLexer;
 import pathfinder.parsing.EncounterModifierParser;
 import pathfinder.sql.MySQLConnection;
 
+/* guava package imports */
+import com.google.common.base.Optional;
+
+/* java package imports */
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,6 +21,7 @@ import java.awt.RenderingHints;
 import java.sql.SQLException;
 import java.util.Random;
 
+/* ANTLR package imports */
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -39,15 +45,16 @@ public class Helper
         return conn;
     }
 
-    public static CharacterTemplate getTemplate(int id)
+    public static Optional<CharacterTemplate> getTemplate(int id)
     {
         try
         {
-            return conn.loadCharacter(id);
+            return Optional.of(conn.loadCharacter(id));
         }
         catch (SQLException e)
         {
-            return null;
+            e.printStackTrace();
+            return Optional.absent();
         }
     }
 
@@ -56,28 +63,28 @@ public class Helper
         return conn.loadSkills();
     }
 
-    public static Group getEncounter(int id)
+    public static Optional<Group> getEncounter(int id)
     {
         try
         {
-            return conn.loadEncounter(id);
+            return Optional.of(conn.loadEncounter(id));
         }
         catch (SQLException e)
         {
-            return null;
+            return Optional.absent();
         }
     }
 
-    public static Group getParty(int campaign)
+    public static Optional<Group> getParty(int campaign)
     {
         try
         {
-            return conn.loadParty(campaign);
+            return Optional.of(conn.loadParty(campaign));
         }
         catch (SQLException e)
         {
             e.printStackTrace();
-            return null;
+            return Optional.absent();
         }
     }
 

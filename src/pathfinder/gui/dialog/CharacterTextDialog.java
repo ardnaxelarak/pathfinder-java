@@ -5,15 +5,12 @@ import pathfinder.Character;
 import pathfinder.Helper;
 import pathfinder.Indexer;
 import pathfinder.enums.DialogType;
-import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.ArrowColumn;
-import pathfinder.gui.dialog.column.MappedFillColumn;
-import pathfinder.gui.dialog.column.MappedTextColumn;
+import pathfinder.gui.dialog.InfoLoader;
 
 /* guava package imports */
-import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.BorderLayout;
@@ -32,35 +29,61 @@ public class CharacterTextDialog extends SelectionDialog
 {
     private Character[] characters;
     private char[] charIndex;
-    private int index;
+    private Optional<Integer> index;
     private boolean finished;
-    private boolean selected;
     private String textValue;
     private Indexer<Character> indexer;
     private DisplayPanel dp;
     private JLabel textLabel, valueLabel;
     private DialogType type;
-    private ArrowColumn arrowColumn;
-    private MappedTextColumn<Character> nameColumn, idColumn, dashColumn;
-    private MappedFillColumn<Character> borderColumn;
+    private final int ARROW_COL, ID_COL, DASH_COL, NAME_COL;
+    private final InfoLoader loader = new InfoLoader()
+    {
+        public Optional<String> getText(int row, int column)
+        {
+            if (column == ID_COL)
+                return Optional.of(indexer.getChar(characters[row]) + "");
+            else if (column == DASH_COL)
+                return Optional.of("-");
+            else if (column == NAME_COL)
+                return Optional.of(characters[row].getName());
+            else
+                return Optional.absent();
+        }
+
+        public Optional<Color> getBackColor(int row, int column)
+        {
+            if (column == ARROW_COL)
+                return Optional.absent();
+            else if (characters[row].isPC())
+                return Optional.of(Resources.PC_COLOR);
+            else
+                return Optional.of(Resources.NPC_COLOR);
+        }
+
+        public Optional<Color> getForeColor(int row, int column)
+        {
+            return Optional.of(Color.black);
+        }
+    };
 
     public CharacterTextDialog(Frame owner, Indexer<Character> indexer)
     {
         super(owner);
         this.indexer = indexer;
-        nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, Character.NAME_FUNCTION, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
 
-        arrowColumn = new ArrowColumn(5, Color.black);
+        dp = new DisplayPanel(loader);
 
-        idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, indexer.INDEXING_FUNCTION, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
-        // idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
-        idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
+        dp.addEmptyColumn(5);
+        ARROW_COL = dp.addArrowColumn(5, 0);
+        dp.addEmptyColumn(5);
+        dp.addFillColumn(4);
+        ID_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        DASH_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        NAME_COL = dp.addTextColumn(Resources.COL_12);
+        dp.addFillColumn(4);
+        dp.addEmptyColumn(5);
 
-        dashColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, Functions.constant("-"), 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
-        dashColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        borderColumn = new MappedFillColumn<Character>(4, Resources.BACK_COLOR_FUNCTION);
-        dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, borderColumn, idColumn, dashColumn, nameColumn, borderColumn, Resources.BORDER_5);
         getContentPane().add(dp, BorderLayout.CENTER);
 
         textLabel = new JLabel("", JLabel.CENTER);
@@ -74,7 +97,7 @@ public class CharacterTextDialog extends SelectionDialog
         getContentPane().add(bottom, BorderLayout.PAGE_END);
     }
 
-    public Character showRenameDialog(List<Character> list)
+    public Optional<Character> showRenameDialog(List<Character> list)
     {
         if (list.isEmpty())
             return null;
@@ -82,13 +105,13 @@ public class CharacterTextDialog extends SelectionDialog
         type = DialogType.RENAME;
         setup(list);
         showDialog();
-        if (finished)
-            return characters[index];
+        if (finished && index.isPresent())
+            return Optional.of(characters[index.get()]);
         else
-            return null;
+            return Optional.absent();
     }
 
-    public Character showDamageDialog(List<Character> list)
+    public Optional<Character> showDamageDialog(List<Character> list)
     {
         if (list.isEmpty())
             return null;
@@ -96,13 +119,13 @@ public class CharacterTextDialog extends SelectionDialog
         type = DialogType.DAMAGE;
         setup(list);
         showDialog();
-        if (finished)
-            return characters[index];
+        if (finished && index.isPresent())
+            return Optional.of(characters[index.get()]);
         else
-            return null;
+            return Optional.absent();
     }
 
-    public Character showHealingDialog(List<Character> list)
+    public Optional<Character> showHealingDialog(List<Character> list)
     {
         if (list.isEmpty())
             return null;
@@ -110,10 +133,10 @@ public class CharacterTextDialog extends SelectionDialog
         type = DialogType.HEALING;
         setup(list);
         showDialog();
-        if (finished)
-            return characters[index];
+        if (finished && index.isPresent())
+            return Optional.of(characters[index.get()]);
         else
-            return null;
+            return Optional.absent();
     }
 
     private void setup(Collection<Character> list)
@@ -123,27 +146,32 @@ public class CharacterTextDialog extends SelectionDialog
         characters = list.toArray(characters);
         Arrays.sort(characters, indexer.INDEXING_COMPARATOR);
 
-        dp.setNumRows(num);
+        dp.initializeValues(num);
         charIndex = new char[num];
 
         for (int i = 0; i < num; i++)
-        {
-            setCharacter(i, characters[i]);
             charIndex[i] = indexer.getChar(characters[i]);
-        }
 
-        setIndex(-1);
+        setIndex();
         finished = false;
-        selected = false;
         textValue = "";
         updateLabel();
-        dp.update();
+    }
+
+    private void setIndex(Optional<Integer> index)
+    {
+        this.index = index;
+        dp.setCurrentRow(index);
     }
 
     private void setIndex(int index)
     {
-        this.index = index;
-        arrowColumn.setIndex(index);
+        setIndex(Optional.of(index));
+    }
+
+    private void setIndex()
+    {
+        setIndex(Optional.<Integer>absent());
     }
 
     private void updateLabel()
@@ -154,32 +182,29 @@ public class CharacterTextDialog extends SelectionDialog
             valueLabel.setText(textValue);
     }
 
-    private void setCharacter(int index, Character c)
-    {
-        dashColumn.setObject(index, c);
-        idColumn.setObject(index, c);
-        borderColumn.setObject(index, c);
-        nameColumn.setObject(index, c);
-    }
-
     private void finish()
     {
         int amt;
-        switch (type)
+        int ind;
+        if (index.isPresent())
         {
-        case RENAME:
-            characters[index].setName(textValue);
-            break;
-        case DAMAGE:
-            amt = Helper.roll(textValue);
-            characters[index].takeDamage(amt, false, false);
-            break;
-        case HEALING:
-            amt = Helper.roll(textValue);
-            characters[index].heal(amt);
-            break;
+            ind = index.get();
+            switch (type)
+            {
+            case RENAME:
+                characters[ind].setName(textValue);
+                break;
+            case DAMAGE:
+                amt = Helper.roll(textValue);
+                characters[ind].takeDamage(amt, false, false);
+                break;
+            case HEALING:
+                amt = Helper.roll(textValue);
+                characters[ind].heal(amt);
+                break;
+            }
+            finished = true;
         }
-        finished = true;
         close();
     }
 
@@ -189,16 +214,10 @@ public class CharacterTextDialog extends SelectionDialog
         switch (e.getKeyCode())
         {
         case KeyEvent.VK_ESCAPE:
-            if (selected)
-            {
-                selected = false;
-                setIndex(-1);
-                dp.repaint();
-            }
+            if (index.isPresent())
+                setIndex();
             else
-            {
                 close();
-            }
             break;
         case KeyEvent.VK_LEFT:
             break;
@@ -208,25 +227,19 @@ public class CharacterTextDialog extends SelectionDialog
             break;
         case KeyEvent.VK_ENTER:
         case KeyEvent.VK_ACCEPT:
-            if (selected)
-            {
+            if (index.isPresent())
                 finish();
-            }
             break;
         case KeyEvent.VK_PAGE_DOWN:
-            if (!selected)
-            {
+            if (!index.isPresent())
                 dp.nextPage();
-            }
             break;
         case KeyEvent.VK_PAGE_UP:
-            if (!selected)
-            {
+            if (!index.isPresent())
                 dp.prevPage();
-            }
             break;
         case KeyEvent.VK_BACK_SPACE:
-            if (selected)
+            if (index.isPresent())
             {
                 if (textValue.length() > 0)
                 {
@@ -242,7 +255,7 @@ public class CharacterTextDialog extends SelectionDialog
     public void keyTyped(KeyEvent e)
     {
         char c = e.getKeyChar();
-        if (selected)
+        if (index.isPresent())
         {
             if (c != '\b')
             {
@@ -256,8 +269,6 @@ public class CharacterTextDialog extends SelectionDialog
             if (ind >= 0)
             {
                 setIndex(ind);
-                selected = true;
-                dp.repaint();
             }
         }
     }

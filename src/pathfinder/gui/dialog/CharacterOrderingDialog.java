@@ -3,15 +3,12 @@ package pathfinder.gui.dialog;
 /* local package imports */
 import pathfinder.Character;
 import pathfinder.Indexer;
-import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.ArrowColumn;
-import pathfinder.gui.dialog.column.MappedFillColumn;
-import pathfinder.gui.dialog.column.MappedTextColumn;
+import pathfinder.gui.dialog.InfoLoader;
 
 /* guava package imports */
-import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.Color;
@@ -28,53 +25,67 @@ public class CharacterOrderingDialog extends SelectionDialog
     private boolean finished;
     private Indexer<Character> indexer;
     private DisplayPanel dp;
-    private ArrowColumn arrowColumn;
-    private MappedTextColumn<Character> nameColumn, idColumn, dashColumn;
-    private MappedFillColumn<Character> borderColumn;
+    private final int ARROW_COL, ID_COL, DASH_COL, NAME_COL;
+    private final InfoLoader loader = new InfoLoader()
+    {
+        public Optional<String> getText(int row, int column)
+        {
+            if (column == ID_COL)
+                return Optional.of(indexer.getChar(characters[row]) + "");
+            else if (column == DASH_COL)
+                return Optional.of("-");
+            else if (column == NAME_COL)
+                return Optional.of(characters[row].getName());
+            else
+                return Optional.absent();
+        }
+
+        public Optional<Color> getBackColor(int row, int column)
+        {
+            if (column == ARROW_COL)
+                return Optional.absent();
+            else if (characters[row].isPC())
+                return Optional.of(Resources.PC_COLOR);
+            else
+                return Optional.of(Resources.NPC_COLOR);
+        }
+
+        public Optional<Color> getForeColor(int row, int column)
+        {
+            return Optional.of(Color.black);
+        }
+    };
+
     public CharacterOrderingDialog(Frame owner, Indexer<Character> indexer)
     {
         super(owner);
         this.indexer = indexer;
-        nameColumn = new MappedTextColumn<Character>(Resources.FONT_12, Character.NAME_FUNCTION, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
 
-        arrowColumn = new ArrowColumn(5, Color.black);
+        dp = new DisplayPanel(loader);
 
-        idColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, indexer.INDEXING_FUNCTION, 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
-        // idColumn.setHorizontalLayout(HorizontalLayout.CENTER);
-        idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        dashColumn = new MappedTextColumn<Character>(Resources.FONT_MONO_12, Functions.constant("-"), 4, 2, Resources.BACK_COLOR_FUNCTION, Color.black);
-        dashColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        borderColumn = new MappedFillColumn<Character>(4, Resources.BACK_COLOR_FUNCTION);
-        dp = new DisplayPanel(Resources.BORDER_5, arrowColumn, Resources.BORDER_5, borderColumn, idColumn, dashColumn, nameColumn, borderColumn, Resources.BORDER_5);
+        dp.addEmptyColumn(5);
+        ARROW_COL = dp.addArrowColumn(5, 0);
+        dp.addEmptyColumn(5);
+        dp.addFillColumn(4);
+        ID_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        DASH_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        NAME_COL = dp.addTextColumn(Resources.COL_12);
+        dp.addFillColumn(4);
+        dp.addEmptyColumn(5);
+ 
         getContentPane().add(dp);
     }
 
-    public Character[] showOrderingDialog(List<Character> list)
+    public Optional<Character[]> showOrderingDialog(List<Character> list)
     {
         if (list.isEmpty())
             return null;
         setup(list);
         showDialog();
         if (finished)
-            return characters;
+            return Optional.of(characters);
         else
-            return null;
-    }
-
-    private void setIndex(int index)
-    {
-        this.index = index;
-        arrowColumn.setIndex(index);
-    }
-
-    private void setCharacter(int index, Character c)
-    {
-        dashColumn.setObject(index, c);
-        idColumn.setObject(index, c);
-        borderColumn.setObject(index, c);
-        nameColumn.setObject(index, c);
+            return Optional.absent();
     }
 
     public void setup(Collection<Character> list)
@@ -83,18 +94,20 @@ public class CharacterOrderingDialog extends SelectionDialog
         characters = new Character[num];
         characters = list.toArray(characters);
 
-        dp.setNumRows(num);
+        dp.initializeValues(num);
         charIndex = new char[num];
 
         for (int i = 0; i < num; i++)
-        {
-            setCharacter(i, characters[i]);
             charIndex[i] = indexer.getChar(characters[i]);
-        }
 
         setIndex(0);
         finished = false;
-        dp.update();
+    }
+
+    private void setIndex(int index)
+    {
+        this.index = index;
+        dp.setCurrentRow(index);
     }
 
     @Override
@@ -113,11 +126,9 @@ public class CharacterOrderingDialog extends SelectionDialog
             break;
         case KeyEvent.VK_UP:
             setIndex((index + characters.length - 1) % characters.length);
-            dp.repaint();
             break;
         case KeyEvent.VK_DOWN:
             setIndex((index + 1) % characters.length);
-            dp.repaint();
             break;
         case KeyEvent.VK_ENTER:
         case KeyEvent.VK_ACCEPT:
@@ -161,11 +172,9 @@ public class CharacterOrderingDialog extends SelectionDialog
                 {
                     charIndex[i] = charIndex[i - 1];
                     characters[i] = characters[i - 1];
-                    setCharacter(i, characters[i]);
                 }
                 charIndex[index] = oldChar;
                 characters[index] = oldCharacter;
-                setCharacter(index, oldCharacter);
                 if (index + 1 < characters.length)
                     setIndex(index + 1);
             }
@@ -177,13 +186,11 @@ public class CharacterOrderingDialog extends SelectionDialog
                 {
                     charIndex[i] = charIndex[i + 1];
                     characters[i] = characters[i + 1];
-                    setCharacter(i, characters[i]);
                 }
                 charIndex[index - 1] = oldChar;
                 characters[index - 1] = oldCharacter;
-                setCharacter(index - 1, oldCharacter);
             }
-            dp.repaint();
+            dp.updateValues();
         }
     }
 }

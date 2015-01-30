@@ -2,18 +2,13 @@ package pathfinder.gui.dialog;
 
 /* local package imports */
 import pathfinder.Indexer;
-import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.DialogColumn;
-import pathfinder.gui.dialog.column.DoubleMappedTextColumn;
-import pathfinder.gui.dialog.column.MappedFillColumn;
-import pathfinder.gui.dialog.column.MappedTextColumn;
-import pathfinder.gui.dialog.column.ObjectColumnCollection;
 
 /* guava package imports */
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.Color;
@@ -24,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class ObjectSelectionDialog<T> extends SelectionDialog
 {
@@ -35,48 +31,58 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
     private boolean finished;
     private Indexer<T> indexer;
     private DisplayPanel dp;
-    private DoubleMappedTextColumn<String, T> selectedColumn;
-    private ObjectColumnCollection<T> columnList;
+    private Function<? super T, Color> backColorFunction;
+    private TreeMap<Integer, Function<? super T, String>> textFunctions;
+
+    private final int ID_COL, SEL_COL;
+    private final InfoLoader loader = new InfoLoader()
+    {
+        public Optional<String> getText(int row, int column)
+        {
+            if (column == ID_COL)
+                return Optional.of(charIndex[row] + "");
+            else if (column == SEL_COL && selected[row])
+                return Optional.of("+");
+            else if (column == SEL_COL && !selected[row])
+                return Optional.of("-");
+            else if (textFunctions.containsKey(column))
+                return Optional.of(textFunctions.get(column).apply(objects.get(row)));
+            else
+                return Optional.absent();
+        }
+
+        public Optional<Color> getBackColor(int row, int column)
+        {
+            return Optional.of(backColorFunction.apply(objects.get(row)));
+        }
+
+        public Optional<Color> getForeColor(int row, int column)
+        {
+            return Optional.of(Color.black);
+        }
+    };
 
     public ObjectSelectionDialog(Frame owner, Indexer<T> indexer, Function<? super T, Color> backColorFunction, List<? extends Function<? super T, String>> textFunctions)
     {
         super(owner);
         this.indexer = indexer;
         int cols = textFunctions.size();
+        this.backColorFunction = backColorFunction;
+        this.textFunctions = new TreeMap<Integer, Function<? super T, String>>();
 
-        MappedTextColumn<T> idColumn;
-        MappedFillColumn<T> borderColumn;
+        dp = new DisplayPanel(loader);
 
-        columnList = new ObjectColumnCollection<T>();
-
-        idColumn = new MappedTextColumn<T>(Resources.FONT_MONO_12, indexer.INDEXING_FUNCTION, 4, 2, backColorFunction, Color.black);
-        idColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        selectedColumn = new DoubleMappedTextColumn<String, T>(Resources.FONT_MONO_12, IDENT, 4, 2, backColorFunction, Color.black);
-        selectedColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        borderColumn = new MappedFillColumn<T>(4, backColorFunction);
-
-        columnList.add(idColumn);
-        columnList.add(borderColumn);
-
-        DialogColumn[] list = new DialogColumn[6 + cols];
-
-        int k = 0;
-        list[k++] = Resources.BORDER_5;
-        list[k++] = borderColumn;
-        list[k++] = idColumn;
-        list[k++] = selectedColumn;
+        dp.addEmptyColumn(5);
+        dp.addFillColumn(4);
+        ID_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        SEL_COL = dp.addTextColumn(Resources.COL_MONO_12);
+        // data columns
         for (Function<? super T, String> function : textFunctions)
         {
-            MappedTextColumn<T> cur = new MappedTextColumn<T>(Resources.FONT_12, function, 4, 2, backColorFunction, Color.black);
-            columnList.add(cur);
-            list[k++] = cur;
+            this.textFunctions.put(dp.addTextColumn(Resources.COL_12), function);   
         }
-        list[k++] = borderColumn;
-        list[k++] = Resources.BORDER_5;
-
-        dp = new DisplayPanel(list);
+        dp.addFillColumn(4);
+        dp.addEmptyColumn(5);
 
         getContentPane().add(dp);
     }
@@ -86,7 +92,7 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         this(owner, indexer, Functions.constant(backColor), textFunctions);
     }
 
-    public T showSingleSelectionDialog(Collection<T> list)
+    public Optional<T> showSingleSelectionDialog(Collection<T> list)
     {
         if (list.isEmpty())
             return null;
@@ -98,12 +104,12 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
             int num = objects.size();
             for (int i = 0; i < num; i++)
                 if (selected[i])
-                    return objects.get(i);
+                    return Optional.of(objects.get(i));
         }
-        return null;
+        return Optional.absent();
     }
 
-    public List<T> showMultipleSelectionDialog(Collection<T> list)
+    public Optional<? extends List<T>> showMultipleSelectionDialog(Collection<T> list)
     {
         if (list.isEmpty())
             return null;
@@ -117,11 +123,11 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
             for (int i = 0; i < num; i++)
                 if (selected[i])
                     ret.add(objects.get(i));
-            return ret;
+            return Optional.of(ret);
         }
         else
         {
-            return null;
+            return Optional.absent();
         }
     }
 
@@ -132,21 +138,16 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         objects.addAll(list);
         Collections.sort(objects, indexer.INDEXING_COMPARATOR);
 
-        dp.setNumRows(num);
+        selected = new boolean[num];
         charIndex = new char[num];
 
-        for (int i = 0; i < num; i++)
-        {
-            T c = objects.get(i);
-            selectedColumn.setObject1(i, "-");
-            selectedColumn.setObject2(i, c);
-            columnList.setObject(i, c);
-            charIndex[i] = indexer.getChar(c);
-        }
+        int i = 0;
+        for (T t : objects)
+            charIndex[i++] = indexer.getChar(t);
 
-        selected = new boolean[num];
+        dp.initializeValues(num);
+
         finished = false;
-        dp.update();
     }
 
     @Override
@@ -190,21 +191,16 @@ public class ObjectSelectionDialog<T> extends SelectionDialog
         if (ind >= 0)
         {
             if (selected[ind])
-            {
                 selected[ind] = false;
-                selectedColumn.setObject1(ind, "-");
-            }
             else
-            {
                 selected[ind] = true;
-                selectedColumn.setObject1(ind, "+");
-            }
+
             if (multiple)
-                dp.repaint();
+                dp.updateValue(ind, SEL_COL);
             else
             {
                 finished = true;
-                super.close();
+                close();
             }
         }
     }

@@ -8,6 +8,9 @@ import pathfinder.Helper;
 import pathfinder.SkillSet;
 import pathfinder.Skills;
 
+/* guava package imports */
+import com.google.common.base.Optional;
+
 /* java package imports */
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -85,7 +88,7 @@ public class MySQLConnection
         ResultSet rs = null;
         int charID, num;
         LinkedList<Character> list = new LinkedList<Character>();
-        CharacterTemplate ct;
+        Optional<CharacterTemplate> ct;
         try
         {
             encSelect.setInt(1, id);
@@ -95,13 +98,13 @@ public class MySQLConnection
                 charID = rs.getInt("creature");
                 num = Helper.roll(rs.getString("num"));
                 ct = Helper.getTemplate(charID);
-                if (ct != null)
+                if (ct.isPresent())
                 {
                     if (num == 1)
-                        list.add(new Character(ct));
+                        list.add(new Character(ct.get()));
                     else
                         for (int i = 0; i < num; i++)
-                            list.add(new Character(ct, String.format("%s %d", ct.getName(), i + 1)));
+                            list.add(new Character(ct.get(), String.format("%s %d", ct.get().getName(), i + 1)));
                 }
             }
 
@@ -121,7 +124,7 @@ public class MySQLConnection
         ResultSet rs = null;
         int charID;
         LinkedList<Character> list = new LinkedList<Character>();
-        CharacterTemplate ct;
+        Optional<CharacterTemplate> ct;
         Character c;
         try
         {
@@ -131,9 +134,9 @@ public class MySQLConnection
             {
                 charID = rs.getInt("pc");
                 ct = Helper.getTemplate(charID);
-                if (ct != null)
+                if (ct.isPresent())
                 {
-                    c = new Character(ct);
+                    c = new Character(ct.get());
                     c.setPC();
                     list.add(c);
                 }

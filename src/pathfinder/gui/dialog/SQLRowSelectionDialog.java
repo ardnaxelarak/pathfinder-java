@@ -1,13 +1,13 @@
 package pathfinder.gui.dialog;
 
 /* local package imports */
-import pathfinder.enums.TextLayout;
 import pathfinder.gui.Resources;
 import pathfinder.gui.dialog.DisplayPanel;
-import pathfinder.gui.dialog.column.DialogColumn;
-import pathfinder.gui.dialog.column.FixedIndexColumn;
-import pathfinder.gui.dialog.column.TextColumn;
+import pathfinder.gui.dialog.InfoLoader;
 import pathfinder.sql.DataColumn;
+
+/* guava package imports */
+import com.google.common.base.Optional;
 
 /* java package imports */
 import java.awt.Color;
@@ -15,10 +15,9 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
-
-/* javax package imports */
-import javax.lang.model.type.NullType;
+import java.util.TreeMap;
 
 public class SQLRowSelectionDialog extends SelectionDialog
 {
@@ -28,44 +27,57 @@ public class SQLRowSelectionDialog extends SelectionDialog
     private boolean finished;
     private DisplayPanel dp;
     private String idName;
-    private FixedIndexColumn<NullType> indexColumn;
-    private TextColumn selectedColumn;
-    private TextColumn[] dataColumns;
     private DataColumn[] dataFetchers;
+    private TreeMap<Integer, Integer> colMapper;
+    private ArrayList<String[]> data;
+    private final int SEL_COL;
+    private final InfoLoader loader = new InfoLoader()
+    {
+        public Optional<String> getText(int row, int column)
+        {
+            if (column == SEL_COL && selected[row])
+                return Optional.of("+");
+            else if (column == SEL_COL && !selected[row])
+                return Optional.of("-");
+            else if (colMapper.containsKey(column))
+                return Optional.of(data.get(row)[colMapper.get(column)]);
+            else
+                return Optional.absent();
+        }
+
+        public Optional<Color> getBackColor(int row, int column)
+        {
+            return Optional.of(Resources.PC_COLOR);
+        }
+
+        public Optional<Color> getForeColor(int row, int column)
+        {
+            return Optional.of(Color.black);
+        }
+    };
 
     public SQLRowSelectionDialog(Frame owner, String idName, DataColumn... columns)
     {
         super(owner);
-        Color backColor = Resources.PC_COLOR;
         this.idName = idName;
+        colMapper = new TreeMap<Integer, Integer>();
+        data = new ArrayList<String[]>();
 
-        indexColumn = FixedIndexColumn.singleColor(Resources.FONT_MONO_12, 4, 2, backColor, Color.black);
-        indexColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
+        dp = new DisplayPanel(loader);
 
-        selectedColumn = new TextColumn(Resources.FONT_MONO_12, 4, 2, backColor, Color.black);
-        selectedColumn.setTextLayout(TextLayout.BOTTOM_CENTER);
-
-        dataColumns = new TextColumn[columns.length];
-        dataFetchers = columns;
-
+        dp.addEmptyColumn(5);
+        dp.addIndexColumn(Resources.COL_MONO_12);
+        SEL_COL = dp.addTextColumn(Resources.COL_MONO_12);
         for (int i = 0; i < columns.length; i++)
-            dataColumns[i] = new TextColumn(Resources.FONT_12, 4, 2, backColor, Color.black);
+            colMapper.put(dp.addTextColumn(Resources.COL_12), i);
+        dp.addEmptyColumn(5);
 
-        DialogColumn[] panelColumns = new DialogColumn[columns.length + 4];
-        int k = 0;
-        panelColumns[k++] = Resources.BORDER_5;
-        panelColumns[k++] = indexColumn;
-        panelColumns[k++] = selectedColumn;
-        for (int i = 0; i < dataColumns.length; i++)
-            panelColumns[k++] = dataColumns[i];
-        panelColumns[k++] = Resources.BORDER_5;
-
-        dp = new DisplayPanel(panelColumns);
+        dataFetchers = columns;
 
         getContentPane().add(dp);
     }
 
-    public int showSingleSelectionDialog(ResultSet rs)
+    public Optional<Integer> showSingleSelectionDialog(ResultSet rs)
     {
         multiple = false;
         setup(rs);
@@ -75,12 +87,12 @@ public class SQLRowSelectionDialog extends SelectionDialog
             int num = ids.length;
             for (int i = 0; i < num; i++)
                 if (selected[i])
-                    return ids[i];
+                    return Optional.of(ids[i]);
         }
-        return -1;
+        return Optional.absent();
     }
 
-    public int[] showMultipleSelectionDialog(ResultSet rs)
+    public Optional<int[]> showMultipleSelectionDialog(ResultSet rs)
     {
         multiple = true;
         setup(rs);
@@ -97,17 +109,17 @@ public class SQLRowSelectionDialog extends SelectionDialog
             for (int i = 0; i < num; i++)
                 if (selected[i])
                     ret[k++] = ids[i];
-            return ret;
+            return Optional.of(ret);
         }
         else
         {
-            return null;
+            return Optional.absent();
         }
     }
 
     public void setup(ResultSet rs)
     {
-        LinkedList<String[]> data = new LinkedList<String[]>();
+        data.clear();
         LinkedList<Integer> idList = new LinkedList<Integer>();
 
         int num = dataFetchers.length;
@@ -144,27 +156,15 @@ public class SQLRowSelectionDialog extends SelectionDialog
 
         int numRows = data.size();
 
-        dp.setNumRows(numRows);
+        dp.initializeValues(numRows);
         ids = new int[numRows];
 
         int j = 0;
-        for (String[] row : data)
-        {
-            selectedColumn.setObject(j, "-");
-            for (int i = 0; i < num; i++)
-            {
-                dataColumns[i].setObject(j, row[i]);
-            }
-            j++;
-        }
-
-        j = 0;
         for (Integer id : idList)
             ids[j++] = id;
 
         selected = new boolean[numRows];
         finished = false;
-        dp.update();
     }
 
     @Override
@@ -214,17 +214,12 @@ public class SQLRowSelectionDialog extends SelectionDialog
         if (ind >= 0)
         {
             if (selected[ind])
-            {
                 selected[ind] = false;
-                selectedColumn.setObject(ind, "-");
-            }
             else
-            {
                 selected[ind] = true;
-                selectedColumn.setObject(ind, "+");
-            }
+
             if (multiple)
-                dp.repaint();
+                dp.updateValue(ind, SEL_COL);
             else
             {
                 finished = true;

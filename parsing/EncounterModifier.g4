@@ -15,7 +15,7 @@ commands
 command
 	[Encounter enc]
 :
-	'add' 'encounter' INT {$enc.addGroup(Helper.getEncounter($INT.int));}
+	'add' 'encounter' INT {$enc.addGroup(Helper.getEncounter($INT.int).get());}
 ;
 
 INT  : [0-9]+ ;
