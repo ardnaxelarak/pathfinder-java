@@ -66,10 +66,13 @@ public class SQLRowSelectionDialog extends SelectionDialog
         dp = new DisplayPanel(loader);
 
         dp.addEmptyColumn(5);
+        dp.addFillColumn(4);
         dp.addIndexColumn(Resources.COL_MONO_12);
+        dp.addFillColumn(4);
         SEL_COL = dp.addTextColumn(Resources.COL_MONO_12);
         for (int i = 0; i < columns.length; i++)
             colMapper.put(dp.addTextColumn(Resources.COL_12), i);
+        dp.addFillColumn(4);
         dp.addEmptyColumn(5);
 
         dataFetchers = columns;
@@ -155,6 +158,7 @@ public class SQLRowSelectionDialog extends SelectionDialog
         }
 
         int numRows = data.size();
+        selected = new boolean[numRows];
 
         dp.initializeValues(numRows);
         ids = new int[numRows];
@@ -163,7 +167,6 @@ public class SQLRowSelectionDialog extends SelectionDialog
         for (Integer id : idList)
             ids[j++] = id;
 
-        selected = new boolean[numRows];
         finished = false;
     }
 

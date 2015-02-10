@@ -354,7 +354,8 @@ public class MainDisplay extends JFrame implements KeyListener, EncounterListene
                 sendMessage(s.get().getName());
                 for (Character chr : characters.getPCs())
                 {
-                    sendMessage("%s (%s)", chr, Helper.modifierString(skills.getModifier(s.get(), chr)));
+                    int mod = skills.getModifier(s.get(), chr);
+                    sendMessage("%s (%s): %d", chr, Helper.modifierString(mod), Helper.roll() + mod);
                 }
             }
         }

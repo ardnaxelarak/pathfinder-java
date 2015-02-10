@@ -8,9 +8,11 @@
 	<property name="lib.path" value="lib"/>
 	<property name="img.path" value="images"/>
 
+    <property name="main-class" value="pathfinder.Main"/>
+
 	<property name="antlr.jar" value="${lib.path}/antlr-4.4-complete.jar"/>
 	<property name="version" value="0.0.0"/>
-	<property name="jarname" value="pathfinder-java-${version}.jar"/>
+    <property name="jarname" value="${ant.project.name}-${version}.jar"/>
 
 	<property name="one-jar.dist.dir" value="/usr/local/lib/one-jar-ant"/>
 	<import file="${one-jar.dist.dir}/one-jar-ant-task.xml" optional="true"/>
@@ -88,7 +90,7 @@
 	</target>
 
     <target name="run" depends="compile">
-        <java classname="pathfinder.Main" fork="true" spawn="true">
+        <java classname="${main-class}" fork="true" spawn="true">
             <classpath refid="project.classpath"/>
             <classpath path="${build.classes.path}"/>
         </java>
@@ -100,7 +102,7 @@
 				<attribute name="Built-By" value="${builder}" />
 				<attribute name="Built-On" value="${build-info.current-date}" />
 				<attribute name="Built-At" value="${build-info.current-time}" />
-				<attribute name="Main-Class" value="pathfinder.Main"/>
+                <attribute name="Main-Class" value="${main-class}"/>
 				<attribute name="Class-Path" value="${manifest.classpath}"/>
 			</manifest>
 		</jar>
@@ -116,7 +118,7 @@
 				<attribute name="Built-By" value="${builder}" />
 				<attribute name="Built-On" value="${build-info.current-date}" />
 				<attribute name="Built-At" value="${build-info.current-time}" />
-				<attribute name="Main-Class" value="pathfinder.Main"/>
+                <attribute name="Main-Class" value="${main-class}"/>
 			</manifest>
 			<main jar="${jarname}"/>
 			<lib>

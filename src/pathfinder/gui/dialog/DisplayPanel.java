@@ -520,6 +520,7 @@ public class DisplayPanel extends JPanel
             {
                 g.setColor(foreColorTable.get(getID(), row));
                 Rectangle inner = cf.getInner(rect);
+                g.setFont(cf.getFont());
                 Helper.drawAlignedString(g, fm, (char)(row - getStartRow() + 'a') + "", inner, cf.getTextLayout());
             }
         }
